@@ -35,7 +35,7 @@ Cada etapa segue o mesmo registro: **objetivo e estado**, **implementação**, *
 
 **Decisões e justificativas:** Manter as partições separadas permite escolher explicitamente os dados de desenvolvimento e teste; `qrels_all` facilita inspeção geral sem perder essa separação.
 
-**Verificação e resultados:** A execução usada para o experimento carregou 3.633 documentos, 3.237 consultas e 134.294 linhas de qrels somadas das três partições. As colunas carregadas são `query-id`, `corpus-id` e `score`.
+**Verificação e resultados:** A execução usada para o experimento em 2026-10-18 carregou 3.633 documentos, 3.237 consultas e 134.294 linhas de qrels somadas das três partições. As colunas carregadas são `query-id`, `corpus-id` e `score`.
 
 **Pendências:** Nenhuma pendência específica de leitura identificada nesta execução.
 
@@ -72,7 +72,7 @@ Cada etapa segue o mesmo registro: **objetivo e estado**, **implementação**, *
 
 **Decisões e justificativas:** Comprimento e postings usam a mesma representação processada que será consultada pelo BM25. Guardar TF nas posting lists permite calcular pontuações sem percorrer todo o corpus para cada consulta. Converter para `dict` comum facilita inspeção e possível serialização.
 
-**Verificação e resultados:** Na execução de 2026-10-17: vocabulário lexical com 19.054 termos; 360.200 postings; comprimento médio processado de 165,82 tokens; tempo de construção medido em 4,5697 s. A medição começa depois da leitura do dataset e cobre tokenização, coleta do vocabulário pré-stemming, criação das posting lists e comprimentos. São valores de uma execução, sujeitos ao ambiente.
+**Verificação e resultados:** Na execução de 2026-10-18: vocabulário lexical com 19.054 termos; 360.200 postings; comprimento médio processado de 165,82 tokens; tempo de construção medido em 3,2874 s. A medição começa depois da leitura do dataset e cobre tokenização, coleta do vocabulário pré-stemming, criação das posting lists e comprimentos. São valores de uma execução, sujeitos ao ambiente.
 
 **Pendências:** Repetir/registrar o tempo no ambiente e condições usados para a entrega final, caso sejam diferentes.
 
@@ -103,27 +103,30 @@ BM25(d,q) = soma_t IDF(t) * [tf(t,d) * (k1 + 1)] /
 
 ### Etapa 5 — Tolerância a erros
 
-**Estado:** Implementada conforme o item 4 do PDF; experimento final executado em 2026-10-17 com dez consultas de `test`.
+**Estado:** Implementada conforme o item 4 do PDF. Ajuste de parâmetros em `dev` e experimento final em dez consultas de `test` executados em 2026-10-18.
 
-**Objetivo:** Corrigir termos desconhecidos com k-gramas para geração de candidatos, Jaccard para filtragem e distância de edição para seleção; medir a perda e recuperação de NDCG@10 no sistema lexical.
+**Objetivo:** Corrigir termos desconhecidos usando k-gramas para gerar candidatos, Jaccard para filtrá-los e distância de edição para selecionar uma alternativa; medir a perda e recuperação de NDCG@10 no sistema lexical.
 
 **Implementação:**
 
-- `raw_vocabulary` é coletado dos tokens minúsculos do título e texto dos documentos antes de stemming/lematização, incluindo tokens que depois são removidos como stopwords. Este é o vocabulário usado para reconhecer termos conhecidos e para correção.
-- `character_kgrams(term, k=3)` produz trigramas de caracteres com padding de início/fim; `kgram_index` associa cada trigrama aos termos do vocabulário e é criado antes do experimento.
-- Para um termo OOV, `best_spelling_candidate` reúne termos via índice de k-gramas, filtra por coeficiente de Jaccard mínimo de 0,30 e seleciona por menor distância de Levenshtein (limite 2), depois maior Jaccard e ordem lexical determinística.
-- `correct_query` mantém termos conhecidos e substitui termos desconhecidos quando há candidato que passa os limiares.
-- `make_oov_typo` introduz uma única inserção, remoção, substituição ou transposição. Só aceita corrupções ausentes do vocabulário pré-stemming e que o corretor mapeia de volta ao termo original.
-- `run_typo_experiment` exige exatamente 10 consultas quando `split='test'`, seleciona consultas com NDCG@10 original maior que zero e distribui os tipos de erro de forma cíclica. O experimento compara consulta original, consulta corrompida e consulta corrigida usando BM25 e NDCG@10 com ganho linear e IDCG sobre todos os julgamentos da consulta.
-- Para cada consulta, quando `NDCG10_original - NDCG10_erro > 0`, calcula `(NDCG10_corrigida - NDCG10_erro) / (NDCG10_original - NDCG10_erro)`. Nos outros casos registra “erro não reduziu o desempenho”. O resultado é salvo em `typo_experiment.csv` com as colunas mínimas exigidas pelo PDF e detalhes adicionais dos tokens/correções.
+- `raw_vocabulary` é coletado dos tokens minúsculos do título e texto dos documentos antes de stemming/lematização, incluindo tokens que depois são removidos como stopwords. Esse é o dicionário usado para reconhecer termos conhecidos e corrigir OOV.
+- `character_kgrams(term, k)` produz k-gramas de caracteres com padding de início/fim. `build_kgram_index` mapeia cada k-grama para os termos do vocabulário.
+- Para cada token fora do vocabulário, `best_spelling_candidate` reúne candidatos pelo índice de k-gramas, filtra pelo coeficiente de Jaccard e escolhe a menor distância de Levenshtein. Empates são resolvidos por Jaccard maior e ordem lexical determinística.
+- `correct_query` preserva tokens conhecidos e corrige somente OOV que encontrem candidato dentro dos limites.
+- `make_oov_typo` cria uma única inserção, remoção, substituição ou transposição e garante que o token artificial não exista no vocabulário. A geração é independente dos parâmetros do corretor, para que todas as configurações de Dev sejam avaliadas sobre os mesmos erros.
+- `tune_typo_parameters` aceita somente o conjunto `dev`. Com 10 casos fixos, compara 24 configurações: `k` em {2, 3, 4}, limiar Jaccard em {0,20; 0,30; 0,40; 0,50} e distância máxima em {1, 2}. O critério de seleção, em ordem, é acurácia na correção do token artificial, NDCG@10 médio corrigido, fração média recuperada nos casos com perda; desempates favorecem trigramas, limiar maior e distância menor. A tabela completa é gravada em `typo_dev_tuning.csv`.
+- Depois do ajuste em Dev, a configuração é congelada e `run_typo_experiment` executa as três condições (original, erro, corrigida) em exatamente 10 consultas de `test`, todas com NDCG@10 original maior que zero. NDCG usa ganho linear e IDCG calculado com todos os julgamentos da consulta.
+- Para cada consulta com `NDCG10_original - NDCG10_erro > 0`, calcula `(NDCG10_corrigida - NDCG10_erro) / (NDCG10_original - NDCG10_erro)`. Caso contrário, registra “erro não reduziu o desempenho”. Os resultados são gravados em `typo_experiment.csv`, com os campos mínimos do PDF e detalhes dos tokens e correções.
 
-**Decisões e justificativas:** Trigramas com marcadores de fronteira ajudam a distinguir prefixos/sufixos e são uma escolha comum para erros curtos. Jaccard reduz candidatos antes do cálculo mais custoso de distância de edição. Levenshtein resolve a seleção pela menor quantidade de inserções, remoções ou substituições; transposição adjacente pode resultar em distância 2 nesta métrica. Os limiares 0,30 e 2 são valores iniciais fixados para esta execução; o código permite ajustá-los em `dev`, mas não foram calibrados nesta execução. A seleção de consultas de teste usa os qrels somente para cumprir o critério obrigatório de NDCG original positivo; nenhum parâmetro foi ajustado com `test`. As outras buscas continuam recebendo as consultas originais, sem correção.
+**Decisões e justificativas:** O ajuste em Dev é necessário para que parâmetros não sejam escolhidos olhando o desempenho de Test. O conjunto de Dev usa corrupções fixas e os mesmos 10 casos em todas as configurações, evitando selecionar um erro diferente para cada candidato. A acurácia da correção do token injetado tem prioridade para assegurar cobertura dos tipos de erro; NDCG corrigido e recuperação da perda também participam da decisão. A distância de Levenshtein pode representar uma transposição adjacente como duas operações; por isso o grid inclui distância máxima 2. As demais etapas de recuperação continuam usando as consultas originais, sem correção, conforme o PDF.
 
-**Verificação e resultados:** A execução carregou 3.633 documentos, 3.237 consultas, construiu vocabulário pré-stemming de 26.475 termos (índice de k-gramas em 0,1024 s) e gerou 10 linhas únicas em `typo_experiment.csv`. Foram usadas inserção (3), remoção (3), substituição (2) e troca de ordem (2). Os dez valores de NDCG@10 original foram positivos; todos os termos artificiais estavam ausentes do vocabulário pré-stemming e os dez termos corrigidos voltaram ao token original. Em 8 consultas o erro reduziu o desempenho e a fração média recuperada foi 1,0; em 2 consultas o erro não reduziu o desempenho conforme a regra do PDF. IDs dos dois casos sem perda: `PLAIN-1109` e `PLAIN-1151`. A execução usou `k1=1.2`, `b=0.75`, Jaccard mínimo 0,30 e distância máxima 2.
+**Verificação e resultados:** O vocabulário de correção contém 26.475 termos; a construção do índice de k-gramas escolhido (k=3) levou 0,0967 s. O ajuste em Dev escolheu `k=3`, limiar Jaccard 0,30 e distância máxima 2, com acurácia de correção do token artificial 0,80, NDCG@10 médio corrigido 0,3932 e fração média recuperada 0,4887 em 9 casos degradados. O grid de 24 configurações foi salvo.
 
-O NLTK tentou buscar stopwords, mas a rede do ambiente não validou o host. O recurso já estava instalado localmente, então a execução prosseguiu. O notebook foi ajustado para só tentar o download se as stopwords não estiverem disponíveis localmente.
+No Test foram avaliadas 10 consultas únicas: inserção (3), remoção (3), substituição (2) e troca de ordem (2). Todas tinham NDCG@10 original positivo e todos os termos artificiais eram OOV. O erro reduziu NDCG em 8 consultas; nas 2 restantes não houve perda, conforme o critério do PDF. A fração média recuperada entre os 8 casos com perda foi 0,75. O corretor recuperou exatamente o token injetado em 8/10 casos; nas consultas `PLAIN-1018` e `PLAIN-1088` selecionou outro termo candidato, e a NDCG corrigida permaneceu igual à NDCG com erro. A configuração de Test foi a escolhida em Dev, sem ajuste com Test.
 
-**Pendências:** Avaliar sensibilidade dos limiares usando apenas `dev`, se desejado; manter o CSV entre os artefatos finais. Os valores medidos acima são uma execução registrada, não evidência de que a configuração seja ótima.
+O NLTK já tinha o recurso de stopwords instalado localmente. Uma execução anterior tentou baixá-lo e falhou ao validar o host; a inicialização foi ajustada para só solicitar download se o recurso local estiver ausente.
+
+**Pendências:** O grid contém apenas os valores especificados acima; ampliar a busca de parâmetros, se necessário, deve continuar usando exclusivamente `dev`. Preservar `typo_dev_tuning.csv` e `typo_experiment.csv` nos artefatos finais.
 
 ### Etapa 6 — Recuperação semântica com sentence-BERT
 
@@ -187,9 +190,10 @@ O NLTK tentou buscar stopwords, mas a rede do ambiente não validou o host. O re
 - `search_bm25(query, top_k, k1, b)`: ranking lexical baseado em postings e estatísticas do índice.
 - `measure_bm25_query_time(split, top_k, repetitions)`: tempo médio de busca por consulta numa partição de qrels.
 - `kgram_index`, `character_kgrams`, `jaccard_coefficient`, `edit_distance`, `correct_query` e `run_typo_experiment`: geração, filtragem, seleção de correção e experimento OOV.
-- `typo_experiment.csv`: resultados por consulta das condições original, com erro e corrigida.
+- `typo_dev_tuning.csv`: comparação das 24 configurações avaliadas em Dev.
+- `typo_experiment.csv`: resultados por consulta das condições original, com erro e corrigida em Test.
 
 ## Registro de execução das notas
 
 - `Notas_Projeto_RI.txt` foi convertido para este arquivo Markdown, mantendo o conteúdo técnico e reorganizando cada etapa com os campos **estado**, **objetivo**, **implementação**, **decisões e justificativas**, **verificação e resultados** e **pendências**.
-- Em 2026-10-17, as células do notebook foram executadas para o experimento lexical de tolerância a erros; resultados e limitações estão registrados nas Etapas 1–5. Não foram executados os demais experimentos.
+- Em 2026-10-18, as células do notebook foram executadas para o ajuste de parâmetros em Dev e o experimento lexical de tolerância a erros; resultados e limitações estão registrados nas Etapas 1–5. Não foram executados os demais experimentos.
