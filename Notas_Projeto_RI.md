@@ -13,7 +13,7 @@ Notas de implementação e decisões para apoiar a redação do relatório.
 
 ## Estado geral
 
-O trabalho prevê BM25 (lexical), sentence-BERT (semântica), reranking e outros componentes especificados no PDF. Até o momento foram implementadas a leitura do dataset, o pré-processamento lexical, o índice invertido, a busca BM25 e o experimento lexical de tolerância a erros. Recuperação semântica, busca híbrida, reranking e as demais avaliações ainda estão pendentes.
+O trabalho prevê BM25 (lexical), sentence-BERT (semântica), reranking e outros componentes especificados no PDF. Estão implementadas a leitura do dataset, o pré-processamento lexical, o índice invertido, a busca BM25, o experimento lexical de tolerância a erros e a recuperação semântica. Busca híbrida, reranking e avaliação comparativa final ainda estão pendentes.
 
 ## Etapas de implementação
 
@@ -130,17 +130,25 @@ O NLTK já tinha o recurso de stopwords instalado localmente. Uma execução ant
 
 ### Etapa 6 — Recuperação semântica com sentence-BERT
 
-**Estado:** Não implementada.
+**Estado:** Implementada e executada em 2026-10-18; embeddings pré-calculados e persistidos.
 
-**Objetivo:** A definir conforme o enunciado e o protocolo experimental.
+**Objetivo:** Codificar previamente cada documento com um bi-encoder pré-treinado, gerar embedding para cada consulta e ranquear documentos por similaridade, conforme a seção de recuperação semântica do PDF (item 5).
 
-**Implementação:** Ainda não há modelo nem código de recuperação semântica registrado.
+**Implementação:**
 
-**Decisões e justificativas:** Pendentes: modelo sentence-BERT, estratégia de codificação, normalização de embeddings e medida de similaridade.
+- A célula `semantic-precompute-and-search` em `Trabalho2.ipynb` carrega `sentence-transformers/all-MiniLM-L6-v2` com Sentence Transformers e seleciona CUDA quando disponível; na execução registrada, usou CPU.
+- A entrada de cada documento é a concatenação de título e texto original. Não se aplica o stemming nem a remoção lexical de stopwords: o modelo semântico recebe texto natural.
+- Os documentos são ordenados por ID antes da codificação para estabelecer alinhamento determinístico. A matriz de embeddings é `float32`, os vetores são L2-normalizados e seus IDs correspondentes são salvos separadamente.
+- Os artefatos persistidos são `artifacts/semantic/all_minilm_l6_v2_document_embeddings.npy`, `artifacts/semantic/all_minilm_l6_v2_document_ids.json` e `artifacts/semantic/all_minilm_l6_v2_manifest.json`. O manifesto registra hash do conteúdo da coleção, dimensão, normalização, limite de tokens, truncamento, biblioteca, dispositivo e tempo de geração.
+- O cache só é reutilizado se nome do modelo, hash dos textos, configuração de normalização, sequência de IDs e dimensões forem compatíveis; se a validação falhar, os vetores são recalculados.
+- `search_semantic(query, top_k)` codifica a consulta original com o mesmo modelo e normalização, calcula produto interno contra a matriz e retorna os maiores scores. Como ambos os lados estão normalizados, o produto interno equivale à similaridade de cosseno. A busca é exaustiva sobre os 3.633 documentos.
+- `measure_semantic_query_time` mede a codificação da consulta mais a busca, excluindo carga do modelo e geração dos vetores dos documentos.
 
-**Verificação e resultados:** Nenhum experimento executado.
+**Decisões e justificativas:** O modelo `all-MiniLM-L6-v2` atende à opção sentence-BERT e ao uso de bi-encoder pré-treinado descritos no PDF. O pré-cálculo evita recodificar todos os documentos a cada consulta. A normalização permite usar produto interno como cosseno de forma eficiente e direta. A busca exaustiva é apropriada ao tamanho atual da coleção e está restrita à etapa semântica; não substitui o índice invertido na busca lexical. A concatenação de título e texto mantém o conteúdo documental completo disponível ao encoder, sujeito ao limite de entrada do modelo.
 
-**Pendências:** Consultar o PDF, escolher e documentar a configuração e implementar a recuperação semântica.
+**Verificação e resultados:** Os embeddings foram efetivamente gerados em CPU com `sentence-transformers 6.1.0` e `torch 2.14.1+cu130`. Foram codificados 3.633 documentos em vetores de 384 dimensões; o arquivo NumPy ocupa 5.580.416 bytes. O modelo aceita até 256 tokens por entrada e 2.864 documentos excederam esse limite; o tokenizador/encoder trunca essas entradas ao comprimento máximo. A soma de norma de um vetor inspecionado foi 1,0. A chamada de `encode` para os documentos levou 112,90 s nesta execução (não inclui carregamento do modelo nem medição do comprimento dos textos). A busca de exemplo executou usando o cache validado. O tempo médio medido sobre as 324 consultas de `dev`, para `top_k=100` e incluindo embedding da consulta mais busca, foi 0,0928 s/consulta. Esses tempos dependem do ambiente e da carga da máquina. Nenhuma avaliação de qualidade semântica ou consulta de `test` foi executada nesta etapa.
+
+**Pendências:** A fração alta de textos acima de 256 tokens deve ser explicitada no relatório; se o grupo decidir avaliar segmentação de documentos para preservar texto além do limite, essa configuração deverá ser ajustada usando `dev` e registrada separadamente. Executar a avaliação semântica e comparar métodos somente no protocolo do item de avaliação, depois de congelar configurações em `dev` e antes de consultar `test`.
 
 ### Etapa 7 — Reranking
 
@@ -188,6 +196,9 @@ O NLTK já tinha o recurso de stopwords instalado localmente. Uma execução ant
 - `document_lengths`, `num_documents` e `avg_document_length`: estatísticas usadas pelo BM25.
 - `num_postings` e `index_build_time_seconds`: total de pares termo-documento e tempo de construção.
 - `search_bm25(query, top_k, k1, b)`: ranking lexical baseado em postings e estatísticas do índice.
+- `semantic_document_embeddings` e `semantic_document_ids`: vetores densos pré-calculados e IDs alinhados por linha.
+- `search_semantic(query, top_k)`: busca por cosseno usando embeddings pré-calculados.
+- `measure_semantic_query_time(split, top_k, repetitions)`: mede latência média de embedding da consulta mais busca.
 - `measure_bm25_query_time(split, top_k, repetitions)`: tempo médio de busca por consulta numa partição de qrels.
 - `kgram_index`, `character_kgrams`, `jaccard_coefficient`, `edit_distance`, `correct_query` e `run_typo_experiment`: geração, filtragem, seleção de correção e experimento OOV.
 - `typo_dev_tuning.csv`: comparação das 24 configurações avaliadas em Dev.
@@ -197,3 +208,8 @@ O NLTK já tinha o recurso de stopwords instalado localmente. Uma execução ant
 
 - `Notas_Projeto_RI.txt` foi convertido para este arquivo Markdown, mantendo o conteúdo técnico e reorganizando cada etapa com os campos **estado**, **objetivo**, **implementação**, **decisões e justificativas**, **verificação e resultados** e **pendências**.
 - Em 2026-10-18, as células do notebook foram executadas para o ajuste de parâmetros em Dev e o experimento lexical de tolerância a erros; resultados e limitações estão registrados nas Etapas 1–5. Não foram executados os demais experimentos.
+
+
+## Registro de execução — 2026-10-18
+
+A etapa 6 foi implementada e executada. Os embeddings e manifesto estão salvos sob `artifacts/semantic/`; a configuração e os resultados confirmados estão descritos na etapa. O cache local do modelo usado para a execução não faz parte dos artefatos do projeto; em uma primeira execução em outro ambiente será necessário que o modelo esteja disponível localmente ou que o Hugging Face possa ser acessado.
