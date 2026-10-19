@@ -2,3 +2,5 @@
 nfcorpus
 *.csv
 Experiments/
+__pycache__/
+*.py[cod]

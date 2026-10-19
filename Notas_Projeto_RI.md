@@ -241,3 +241,17 @@ A avaliação dos itens 6–7 do PDF foi executada após congelar BM25 padrão (
 ## Registro de organização dos artefatos — 2026-10-19
 
 Todos os arquivos de saída dos experimentos, incluindo rankings, métricas, resultados de tolerância a erros, comparação por consulta e embeddings pré-calculados, foram centralizados em `Experiments/`. O notebook cria a pasta ao carregar o dataset e escreve os novos resultados nesse local. A pasta está listada no `.gitignore` para que os artefatos locais não sejam enviados ao GitHub; os arquivos podem ser regenerados executando o notebook.
+
+### Registro de modularização — 2026-10-19
+
+**Estado:** Implementação reorganizada; experimentos não foram reexecutados nesta alteração.
+
+**Objetivo:** Separar a implementação do notebook em módulos Python para facilitar manutenção e reutilização, mantendo o notebook como fluxo principal do trabalho.
+
+**Implementação:** Criado o pacote `ri_project/` com módulos para configuração (`config.py`), leitura do NF-Corpus (`data.py`), pré-processamento (`preprocessing.py`), índice invertido (`indexing.py`), BM25 (`bm25.py`), tolerância a erros e ajuste em Dev (`typo.py`), embeddings/busca semântica (`semantic.py`) e métricas/comparações (`evaluation.py`). O notebook foi reduzido a imports, chamadas sequenciais dessas APIs, gravação dos resultados e apresentação das tabelas/consultas. Os caminhos dos artefatos continuam centralizados em `Experiments/`. O `README.md` documenta a estrutura, dependências e ordem de execução.
+
+**Decisões e justificativas:** As funções que dependem de estado do índice ou dos embeddings foram agrupadas em `BM25Retriever` e `SemanticRetriever`; os fluxos de tolerância a erros e avaliação recebem essas dependências explicitamente. Isso torna os limites entre os métodos visíveis e reduz a dependência de variáveis globais do notebook. A sequência experimental existente continua declarada no notebook, que serve como interface didática e executável. `Experiments/` permanece ignorada pelo Git conforme a organização anterior.
+
+**Verificação e resultados:** `python3 -m py_compile ri_project/*.py` concluiu sem erros. As células de código do notebook foram compiladas individualmente e a estrutura JSON do notebook foi lida com sucesso. Nenhum experimento foi executado; portanto, não há novos tempos, métricas ou confirmação de equivalência numérica nesta etapa.
+
+**Pendências:** Executar o notebook integralmente em um ambiente com NF-Corpus, dependências e modelo disponíveis para confirmar o fluxo de ponta a ponta e regenerar os artefatos locais, caso necessário. O item de reranking continua pendente conforme registrado na Etapa 7.
