@@ -13,7 +13,7 @@ Notas de implementação e decisões para apoiar a redação do relatório.
 
 ## Estado geral
 
-O trabalho prevê BM25 (lexical), sentence-BERT (semântica), reranking e outros componentes especificados no PDF. Estão implementadas a leitura do dataset, o pré-processamento lexical, o índice invertido, a busca BM25, o experimento lexical de tolerância a erros e a recuperação semântica. Busca híbrida, reranking e avaliação comparativa final ainda estão pendentes.
+O trabalho prevê BM25 (lexical), sentence-BERT (semântica), reranking e outros componentes especificados no PDF. Estão implementadas a leitura do dataset, o pré-processamento lexical, o índice invertido, a busca BM25, o experimento lexical de tolerância a erros, a recuperação semântica e a avaliação lexical × semântica em test. Busca híbrida, reranking e RAG ainda estão pendentes.
 
 ## Etapas de implementação
 
@@ -114,9 +114,9 @@ BM25(d,q) = soma_t IDF(t) * [tf(t,d) * (k1 + 1)] /
 - Para cada token fora do vocabulário, `best_spelling_candidate` reúne candidatos pelo índice de k-gramas, filtra pelo coeficiente de Jaccard e escolhe a menor distância de Levenshtein. Empates são resolvidos por Jaccard maior e ordem lexical determinística.
 - `correct_query` preserva tokens conhecidos e corrige somente OOV que encontrem candidato dentro dos limites.
 - `make_oov_typo` cria uma única inserção, remoção, substituição ou transposição e garante que o token artificial não exista no vocabulário. A geração é independente dos parâmetros do corretor, para que todas as configurações de Dev sejam avaliadas sobre os mesmos erros.
-- `tune_typo_parameters` aceita somente o conjunto `dev`. Com 10 casos fixos, compara 24 configurações: `k` em {2, 3, 4}, limiar Jaccard em {0,20; 0,30; 0,40; 0,50} e distância máxima em {1, 2}. O critério de seleção, em ordem, é acurácia na correção do token artificial, NDCG@10 médio corrigido, fração média recuperada nos casos com perda; desempates favorecem trigramas, limiar maior e distância menor. A tabela completa é gravada em `typo_dev_tuning.csv`.
+- `tune_typo_parameters` aceita somente o conjunto `dev`. Com 10 casos fixos, compara 24 configurações: `k` em {2, 3, 4}, limiar Jaccard em {0,20; 0,30; 0,40; 0,50} e distância máxima em {1, 2}. O critério de seleção, em ordem, é acurácia na correção do token artificial, NDCG@10 médio corrigido, fração média recuperada nos casos com perda; desempates favorecem trigramas, limiar maior e distância menor. A tabela completa é gravada em `Experiments/typo_dev_tuning.csv`.
 - Depois do ajuste em Dev, a configuração é congelada e `run_typo_experiment` executa as três condições (original, erro, corrigida) em exatamente 10 consultas de `test`, todas com NDCG@10 original maior que zero. NDCG usa ganho linear e IDCG calculado com todos os julgamentos da consulta.
-- Para cada consulta com `NDCG10_original - NDCG10_erro > 0`, calcula `(NDCG10_corrigida - NDCG10_erro) / (NDCG10_original - NDCG10_erro)`. Caso contrário, registra “erro não reduziu o desempenho”. Os resultados são gravados em `typo_experiment.csv`, com os campos mínimos do PDF e detalhes dos tokens e correções.
+- Para cada consulta com `NDCG10_original - NDCG10_erro > 0`, calcula `(NDCG10_corrigida - NDCG10_erro) / (NDCG10_original - NDCG10_erro)`. Caso contrário, registra “erro não reduziu o desempenho”. Os resultados são gravados em `Experiments/typo_experiment.csv`, com os campos mínimos do PDF e detalhes dos tokens e correções.
 
 **Decisões e justificativas:** O ajuste em Dev é necessário para que parâmetros não sejam escolhidos olhando o desempenho de Test. O conjunto de Dev usa corrupções fixas e os mesmos 10 casos em todas as configurações, evitando selecionar um erro diferente para cada candidato. A acurácia da correção do token injetado tem prioridade para assegurar cobertura dos tipos de erro; NDCG corrigido e recuperação da perda também participam da decisão. A distância de Levenshtein pode representar uma transposição adjacente como duas operações; por isso o grid inclui distância máxima 2. As demais etapas de recuperação continuam usando as consultas originais, sem correção, conforme o PDF.
 
@@ -126,7 +126,7 @@ No Test foram avaliadas 10 consultas únicas: inserção (3), remoção (3), sub
 
 O NLTK já tinha o recurso de stopwords instalado localmente. Uma execução anterior tentou baixá-lo e falhou ao validar o host; a inicialização foi ajustada para só solicitar download se o recurso local estiver ausente.
 
-**Pendências:** O grid contém apenas os valores especificados acima; ampliar a busca de parâmetros, se necessário, deve continuar usando exclusivamente `dev`. Preservar `typo_dev_tuning.csv` e `typo_experiment.csv` nos artefatos finais.
+**Pendências:** O grid contém apenas os valores especificados acima; ampliar a busca de parâmetros, se necessário, deve continuar usando exclusivamente `dev`. Preservar `Experiments/typo_dev_tuning.csv` e `Experiments/typo_experiment.csv` nos artefatos finais.
 
 ### Etapa 6 — Recuperação semântica com sentence-BERT
 
@@ -139,7 +139,7 @@ O NLTK já tinha o recurso de stopwords instalado localmente. Uma execução ant
 - A célula `semantic-precompute-and-search` em `Trabalho2.ipynb` carrega `sentence-transformers/all-MiniLM-L6-v2` com Sentence Transformers e seleciona CUDA quando disponível; na execução registrada, usou CPU.
 - A entrada de cada documento é a concatenação de título e texto original. Não se aplica o stemming nem a remoção lexical de stopwords: o modelo semântico recebe texto natural.
 - Os documentos são ordenados por ID antes da codificação para estabelecer alinhamento determinístico. A matriz de embeddings é `float32`, os vetores são L2-normalizados e seus IDs correspondentes são salvos separadamente.
-- Os artefatos persistidos são `artifacts/semantic/all_minilm_l6_v2_document_embeddings.npy`, `artifacts/semantic/all_minilm_l6_v2_document_ids.json` e `artifacts/semantic/all_minilm_l6_v2_manifest.json`. O manifesto registra hash do conteúdo da coleção, dimensão, normalização, limite de tokens, truncamento, biblioteca, dispositivo e tempo de geração.
+- Os artefatos persistidos são `Experiments/semantic/all_minilm_l6_v2_document_embeddings.npy`, `Experiments/semantic/all_minilm_l6_v2_document_ids.json` e `Experiments/semantic/all_minilm_l6_v2_manifest.json`. O manifesto registra hash do conteúdo da coleção, dimensão, normalização, limite de tokens, truncamento, biblioteca, dispositivo e tempo de geração.
 - O cache só é reutilizado se nome do modelo, hash dos textos, configuração de normalização, sequência de IDs e dimensões forem compatíveis; se a validação falhar, os vetores são recalculados.
 - `search_semantic(query, top_k)` codifica a consulta original com o mesmo modelo e normalização, calcula produto interno contra a matriz e retorna os maiores scores. Como ambos os lados estão normalizados, o produto interno equivale à similaridade de cosseno. A busca é exaustiva sobre os 3.633 documentos.
 - `measure_semantic_query_time` mede a codificação da consulta mais a busca, excluindo carga do modelo e geração dos vetores dos documentos.
@@ -148,7 +148,7 @@ O NLTK já tinha o recurso de stopwords instalado localmente. Uma execução ant
 
 **Verificação e resultados:** Os embeddings foram efetivamente gerados em CPU com `sentence-transformers 6.1.0` e `torch 2.14.1+cu130`. Foram codificados 3.633 documentos em vetores de 384 dimensões; o arquivo NumPy ocupa 5.580.416 bytes. O modelo aceita até 256 tokens por entrada e 2.864 documentos excederam esse limite; o tokenizador/encoder trunca essas entradas ao comprimento máximo. A soma de norma de um vetor inspecionado foi 1,0. A chamada de `encode` para os documentos levou 112,90 s nesta execução (não inclui carregamento do modelo nem medição do comprimento dos textos). A busca de exemplo executou usando o cache validado. O tempo médio medido sobre as 324 consultas de `dev`, para `top_k=100` e incluindo embedding da consulta mais busca, foi 0,0928 s/consulta. Esses tempos dependem do ambiente e da carga da máquina. Nenhuma avaliação de qualidade semântica ou consulta de `test` foi executada nesta etapa.
 
-**Pendências:** A fração alta de textos acima de 256 tokens deve ser explicitada no relatório; se o grupo decidir avaliar segmentação de documentos para preservar texto além do limite, essa configuração deverá ser ajustada usando `dev` e registrada separadamente. Executar a avaliação semântica e comparar métodos somente no protocolo do item de avaliação, depois de congelar configurações em `dev` e antes de consultar `test`.
+**Pendências:** A fração alta de textos acima de 256 tokens deve ser explicitada no relatório; se o grupo decidir avaliar segmentação de documentos para preservar texto além do limite, essa configuração deverá ser ajustada usando `dev` e registrada separadamente. Os resultados da avaliação e comparação em `test` estão na Etapa 8.
 
 ### Etapa 7 — Reranking
 
@@ -164,19 +164,34 @@ O NLTK já tinha o recurso de stopwords instalado localmente. Uma execução ant
 
 **Pendências:** Consultar o PDF, definir o pipeline e implementar o reranking.
 
-### Etapa 8 — Avaliação experimental
+### Etapa 8 — Avaliação lexical × semântica
 
-**Estado:** Não implementada.
+**Estado:** Métricas, exportação dos resultados e comparação por consulta implementadas e executadas em `test` em 2026-10-19.
 
-**Objetivo:** Comparar as técnicas sob protocolo e métricas especificados no PDF.
+**Objetivo:** Avaliar BM25 e recuperação semântica nas mesmas consultas de teste com as métricas do item 6 do PDF e identificar os casos extremos de diferença de NDCG@10 requeridos pelo item 7 (PDF, pp. 3–4, itens 6–7).
 
-**Implementação:** Ainda não há protocolo de avaliação implementado.
+**Implementação:**
 
-**Decisões e justificativas:** Pendentes: métricas, partições, parâmetros e protocolo comparável entre as técnicas.
+- A célula `retrieval-evaluation-test` calcula Precision@10, Recall@10, AP@10 e NDCG@10 por consulta e as médias macro. Relevância binária é `score > 0` para P/R/AP; Recall e AP usam como denominador todos os documentos relevantes da consulta nos qrels. NDCG preserva os graus dos qrels, usa ganho linear e calcula o ideal sobre todos os julgamentos da consulta.
+- BM25 foi avaliado com `k1=1.2`, `b=0.75`, e semântica com `sentence-transformers/all-MiniLM-L6-v2`, vetores de 384 dimensões e cosseno. São as configurações congeladas para esta avaliação; não houve ajuste olhando para os resultados de `test`.
+- Foram usadas as 323 consultas que têm qrels em `qrels/test.tsv` e registro em `queries.jsonl`, igual para os dois métodos. Os rankings exportados têm profundidade 100. BM25 pontua somente candidatos vindos das posting lists. Se houver menos de 100 candidatos, documentos não pontuados são completados com score zero e desempate crescente por ID; a complementação inspeciona apenas os IDs necessários à profundidade de exportação e não calcula BM25 para o corpus inteiro.
+- Os arquivos padronizados `Experiments/results_lexical.csv` e `Experiments/results_semantic.csv` têm `query_id`, `doc_id`, `rank`, `score` e `relevance`. `Experiments/metrics_per_query.csv` tem `query_id`, `model`, `P10`, `R10`, `AP10` e `NDCG10`; `Experiments/metrics_summary.csv` guarda médias, número de consultas e tempo por consulta.
+- `Experiments/comparison_cases_summary.csv` guarda as três consultas com maior ganho semântico e as três com maior ganho lexical por ΔNDCG@10 (semântico menos lexical). `Experiments/comparison_cases_top5.csv` apresenta os Top5 dos dois métodos por caso, com texto da consulta/documento, scores, graus de relevância e termos da consulta que coincidem após pré-processamento lexical. A análise interpretativa está em `Experiments/comparison_cases_analysis.md`. Duas células finais no notebook imprimem separadamente os três casos com vantagem semântica e os três com vantagem lexical, mostrando para cada consulta os Top5 de ambos os métodos e marcando cada documento como relevante (com grau) ou não relevante.
 
-**Verificação e resultados:** Nenhuma avaliação executada; não há resultados experimentais para relatar.
+**Decisões e justificativas:** As duas condições compartilham exatamente a mesma partição e consulta, de modo que a comparação seja pareada. Os scores BM25 e cosseno têm escalas diferentes e não são comparados numericamente entre si; a comparação usa métricas de ranking e ΔNDCG@10. O desempate lexical de score zero por ID é determinístico e usado apenas para cumprir a profundidade Top100 quando a lista de postings não fornece candidatos suficientes; os scores positivos e sua ordem vêm exclusivamente do BM25 sobre o índice invertido.
 
-**Pendências:** Conferir no PDF requisitos, estrutura do relatório, condições experimentais e forma de entrega. Selecionar configurações em `dev`, congelá-las e só então executar avaliação final em `test`.
+**Verificação e resultados:** Foram avaliadas 323 consultas por método. Médias em `test`:
+
+| Método | P@10 | R@10 | MAP@10 | NDCG@10 | Tempo médio por consulta |
+|---|---:|---:|---:|---:|---:|
+| BM25 (`k1=1.2`, `b=0.75`) | 0,2390 | 0,1532 | 0,1218 | 0,3278 | 0,0006 s |
+| all-MiniLM-L6-v2 | 0,2433 | 0,1550 | 0,1108 | 0,3167 | 0,0617 s |
+
+A média de `AP10` em `Experiments/metrics_per_query.csv` coincide com `MAP10` em `Experiments/metrics_summary.csv` para ambos os métodos. Cada arquivo de ranking contém 32.300 linhas (100 por consulta). O semântico obteve P@10 e R@10 ligeiramente maiores; BM25 obteve MAP@10 e NDCG@10 maiores. Os tempos foram medidos no mesmo processo após carregar o modelo e aquecer a codificação semântica; incluem busca e embedding da consulta para semântica, mas não incluem carga do modelo nem geração dos embeddings documentais. Os scores não foram interpretados como comparáveis entre métodos.
+
+A diferença semântica − lexical de NDCG@10 foi: `PLAIN-307` +0,6714, `PLAIN-3085` +0,5706 e `PLAIN-1537` +0,5670. A maior vantagem lexical ocorreu em `PLAIN-1473` (−1,0000), seguida por `PLAIN-2081` (−1,0000) e `PLAIN-1288` (−0,7601). Consultas, Top5, julgamentos e evidências textuais estão nos CSVs acima; interpretação dos casos está no arquivo Markdown de análise.
+
+**Pendências:** Avaliar fusão híbrida, reranking e demais etapas do pipeline segundo os itens subsequentes do PDF. A escolha de modelo semântico foi fixada previamente por solicitação do projeto; caso o grupo queira comparar modelos alternativos, essa seleção deve ser feita exclusivamente em `dev`, sem alterar esta configuração com base no `test`.
 
 ## Correções feitas no esboço anterior
 
@@ -199,10 +214,13 @@ O NLTK já tinha o recurso de stopwords instalado localmente. Uma execução ant
 - `semantic_document_embeddings` e `semantic_document_ids`: vetores densos pré-calculados e IDs alinhados por linha.
 - `search_semantic(query, top_k)`: busca por cosseno usando embeddings pré-calculados.
 - `measure_semantic_query_time(split, top_k, repetitions)`: mede latência média de embedding da consulta mais busca.
+- `Experiments/metrics_per_query.csv` e `Experiments/metrics_summary.csv`: resultados quantitativos de teste lexical e semântico.
+- `Experiments/results_lexical.csv` e `Experiments/results_semantic.csv`: rankings Top100 com scores e julgamentos.
+- `Experiments/comparison_cases_summary.csv`, `Experiments/comparison_cases_top5.csv` e `Experiments/comparison_cases_analysis.md`: comparação dos seis casos extremos de NDCG@10.
 - `measure_bm25_query_time(split, top_k, repetitions)`: tempo médio de busca por consulta numa partição de qrels.
 - `kgram_index`, `character_kgrams`, `jaccard_coefficient`, `edit_distance`, `correct_query` e `run_typo_experiment`: geração, filtragem, seleção de correção e experimento OOV.
-- `typo_dev_tuning.csv`: comparação das 24 configurações avaliadas em Dev.
-- `typo_experiment.csv`: resultados por consulta das condições original, com erro e corrigida em Test.
+- `Experiments/typo_dev_tuning.csv`: comparação das 24 configurações avaliadas em Dev.
+- `Experiments/typo_experiment.csv`: resultados por consulta das condições original, com erro e corrigida em Test.
 
 ## Registro de execução das notas
 
@@ -212,4 +230,14 @@ O NLTK já tinha o recurso de stopwords instalado localmente. Uma execução ant
 
 ## Registro de execução — 2026-10-18
 
-A etapa 6 foi implementada e executada. Os embeddings e manifesto estão salvos sob `artifacts/semantic/`; a configuração e os resultados confirmados estão descritos na etapa. O cache local do modelo usado para a execução não faz parte dos artefatos do projeto; em uma primeira execução em outro ambiente será necessário que o modelo esteja disponível localmente ou que o Hugging Face possa ser acessado.
+A etapa 6 foi implementada e executada. Os embeddings e manifesto estão salvos sob `Experiments/semantic/`; a configuração e os resultados confirmados estão descritos na etapa. O cache local do modelo usado para a execução não faz parte dos artefatos do projeto; em uma primeira execução em outro ambiente será necessário que o modelo esteja disponível localmente ou que o Hugging Face possa ser acessado.
+
+
+## Registro de execução — 2026-10-19
+
+A avaliação dos itens 6–7 do PDF foi executada após congelar BM25 padrão (`k1=1.2`, `b=0.75`) e o modelo semântico solicitado. Os artefatos CSV e a análise por consulta estão listados na Etapa 8. Não houve ajuste de parâmetros com base em `test`.
+
+
+## Registro de organização dos artefatos — 2026-10-19
+
+Todos os arquivos de saída dos experimentos, incluindo rankings, métricas, resultados de tolerância a erros, comparação por consulta e embeddings pré-calculados, foram centralizados em `Experiments/`. O notebook cria a pasta ao carregar o dataset e escreve os novos resultados nesse local. A pasta está listada no `.gitignore` para que os artefatos locais não sejam enviados ao GitHub; os arquivos podem ser regenerados executando o notebook.

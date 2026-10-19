@@ -6,3 +6,13 @@
 - Maicon Chaves Marques (14593530)
 
 Link de acesso ao relatório: https://docs.google.com/document/d/1tfYRqScAYURl9fCsafOWWNqWjfrmm_A7AEU_h4iyl6M/edit?usp=sharing
+
+## Descrição
+
+## Como Executar
+
+## Linguagem e Bibliotecas
+
+## Modelos
+
+## Hardware e Ordem de Execução
