@@ -9,11 +9,11 @@ Notas de implementação e decisões para apoiar a redação do relatório.
 | Projeto | `Trabalho-Modelos-Semanticos-RI` |
 | Notebook | `Trabalho2.ipynb` |
 | Dataset | `nfcorpus/nfcorpus/` |
-| Documento de requisitos | `Trabalho_Pratico_2_RI_2026.pdf` |
+| Documento de requisitos | `Trabalho_Pratico_2_RI_2026.md` (versão Markdown consultada) |
 
 ## Estado geral
 
-O trabalho prevê BM25 (lexical), sentence-BERT (semântica), reranking e outros componentes especificados no PDF. Estão implementadas a leitura do dataset, o pré-processamento lexical, o índice invertido, a busca BM25, o experimento lexical de tolerância a erros, a recuperação semântica e a avaliação lexical × semântica em test. Busca híbrida, reranking e RAG ainda estão pendentes.
+O trabalho prevê BM25 (lexical), sentence-BERT (semântica), reranking e outros componentes especificados em `Trabalho_Pratico_2_RI_2026.md`. Estão implementadas a leitura do dataset, o pré-processamento lexical, o índice invertido, a busca BM25, o experimento lexical de tolerância a erros, a recuperação semântica e a avaliação lexical × semântica em test. Busca híbrida RRF foi ajustada em dev e avaliada em test; reranking Top-50 com cross-encoder foi avaliado em dev/test e analisado por consulta conforme o item 10. A etapa RAG continua pendente.
 
 ## Etapas de implementação
 
@@ -152,17 +152,28 @@ O NLTK já tinha o recurso de stopwords instalado localmente. Uma execução ant
 
 ### Etapa 7 — Reranking
 
-**Estado:** Não implementada.
+**Estado:** Implementado e avaliado em `dev` e `test` em 2026-10-20, conforme item 9 de `Trabalho_Pratico_2_RI_2026.md`.
 
-**Objetivo:** A definir conforme o enunciado e o protocolo experimental.
+**Objetivo:** Usar o ranking híbrido como recuperação inicial, reordenar os 50 primeiros documentos com um cross-encoder e preservar a ordem relativa dos documentos que estavam abaixo da posição 50.
 
-**Implementação:** Ainda não há método de reranking registrado.
+**Implementação:** `ri_project/reranking.py` implementa `CrossEncoderReranker` e `HybridRerankingRetriever`. O modelo `cross-encoder/ms-marco-MiniLM-L6-v2` (revisão `233902d25c440f23af6f7d6e94d2946bac0bee0a`, Sentence Transformers 6.1.0) pontua pares de consulta e documento formados pelo texto da consulta e pela concatenação de título e texto do documento. Os 50 documentos com maior score do cross-encoder compõem o início do ranking; os itens originalmente a partir da posição 51 mantêm sua ordem híbrida. A avaliação de `ri_project/evaluation.py` inclui Lexical, Semântico, Híbrido e Híbrido + reranking, grava `Experiments/results_reranking.csv` e métricas por consulta e agregadas. O manifesto em `Experiments/reranker_manifest.json` registra modelo, dispositivo, profundidade e comprimento de entrada.
 
-**Decisões e justificativas:** Pendentes: método/modelo de reranking, conjunto de candidatos recebido e configuração.
+**Decisões e justificativas:** O cross-encoder foi escolhido dentre os modelos sugeridos no enunciado por avaliar conjuntamente consulta e documento, permitindo interação entre os dois textos. A escolha foi examinada em `dev` antes de congelar o modelo para `test`. O limite configurado foi 512 tokens, batch size 32 e profundidade de reranking 50. Foi fixada a revisão do modelo para reproduzir os pesos usados na execução. O score final dos primeiros 50 é o score do cross-encoder; a cauda conserva o score RRF de origem e a ordem relativa, e o CSV preserva também `hybrid_score`, `reranker_score` e `hybrid_rank` para distinguir as fontes dos valores.
 
-**Verificação e resultados:** Nenhum experimento executado.
+**Verificação e resultados:** Em `dev`, o NDCG@10 subiu de 0,3231 no híbrido para 0,3317 com reranking; o tempo médio total do sistema reranqueado foi 0,2549 s/consulta, dos quais 0,0215 s para recuperação híbrida e 0,2323 s para reranking. Foram pontuados 16.200 pares consulta-documento e 1.501 excederam o limite de 512 tokens antes do truncamento.
 
-**Pendências:** Consultar o PDF, definir o pipeline e implementar o reranking.
+Em `test`, foram avaliadas 323 consultas por método, com rankings de 100 documentos por consulta. Resultados médios:
+
+| Método | P@10 | R@10 | MAP@10 | NDCG@10 | Tempo total médio (s/consulta) |
+|---|---:|---:|---:|---:|---:|
+| BM25 | 0,2390 | 0,1532 | 0,1218 | 0,3278 | 0,0005 |
+| all-MiniLM-L6-v2 | 0,2433 | 0,1550 | 0,1108 | 0,3167 | 0,0193 |
+| Híbrido RRF (`k=10`) | 0,2560 | 0,1694 | 0,1318 | 0,3493 | 0,0228 |
+| Híbrido + reranking | 0,2511 | 0,1663 | 0,1385 | 0,3564 | 0,2567 |
+
+O reranking em `test` teve tempo médio de 0,0221 s/consulta para recuperação híbrida e 0,2335 s/consulta para a etapa cross-encoder. Foram pontuados 16.150 pares; 1.564 excederam 512 tokens antes do truncamento, com maior comprimento observado de 2.389 tokens. O modelo executou no dispositivo reportado pelo PyTorch como `cuda`. Cada ranking `results_reranking.csv` contém 32.300 linhas (100 por consulta), além dos campos exigidos pelo enunciado para identificar score e posição de cada componente.
+
+**Pendências:** A análise por consulta do item 10 foi feita na Etapa 10. Discutir no relatório o truncamento de entrada e o custo/latência de inferência registrados nesta etapa.
 
 ### Etapa 8 — Avaliação lexical × semântica
 
@@ -191,7 +202,7 @@ A média de `AP10` em `Experiments/metrics_per_query.csv` coincide com `MAP10` e
 
 A diferença semântica − lexical de NDCG@10 foi: `PLAIN-307` +0,6714, `PLAIN-3085` +0,5706 e `PLAIN-1537` +0,5670. A maior vantagem lexical ocorreu em `PLAIN-1473` (−1,0000), seguida por `PLAIN-2081` (−1,0000) e `PLAIN-1288` (−0,7601). Consultas, Top5, julgamentos e evidências textuais estão nos CSVs acima; interpretação dos casos está no arquivo Markdown de análise.
 
-**Pendências:** Avaliar fusão híbrida, reranking e demais etapas do pipeline segundo os itens subsequentes do PDF. A escolha de modelo semântico foi fixada previamente por solicitação do projeto; caso o grupo queira comparar modelos alternativos, essa seleção deve ser feita exclusivamente em `dev`, sem alterar esta configuração com base no `test`.
+**Pendências:** A avaliação híbrida RRF e o reranking foram executados posteriormente e estão registrados nas Etapas 9 e 7; a análise por consulta está na Etapa 10. RAG e demais etapas seguintes continuam pendentes. A escolha de modelo semântico foi fixada previamente por solicitação do projeto; caso o grupo queira comparar modelos alternativos, essa seleção deve ser feita exclusivamente em `dev`, sem alterar esta configuração com base no `test`.
 
 ## Correções feitas no esboço anterior
 
@@ -254,4 +265,34 @@ Todos os arquivos de saída dos experimentos, incluindo rankings, métricas, res
 
 **Verificação e resultados:** `python3 -m py_compile ri_project/*.py` concluiu sem erros. As células de código do notebook foram compiladas individualmente e a estrutura JSON do notebook foi lida com sucesso. Nenhum experimento foi executado; portanto, não há novos tempos, métricas ou confirmação de equivalência numérica nesta etapa.
 
-**Pendências:** Executar o notebook integralmente em um ambiente com NF-Corpus, dependências e modelo disponíveis para confirmar o fluxo de ponta a ponta e regenerar os artefatos locais, caso necessário. O item de reranking continua pendente conforme registrado na Etapa 7.
+**Pendências:** Executar o notebook integralmente em um ambiente com NF-Corpus, dependências e modelo disponíveis para confirmar o fluxo de ponta a ponta e regenerar os artefatos locais, caso necessário. Na data deste registro, o item de reranking ainda estava pendente; a implementação posterior está registrada na Etapa 7.
+
+
+### Etapa 9 — Busca híbrida com Reciprocal Rank Fusion
+
+**Estado:** Ajuste de parâmetro e avaliação final executados em `dev`/`test` em 2026-10-20, conforme item 8 de `Trabalho_Pratico_2_RI_2026.md`.
+
+**Objetivo:** Combinar os 100 primeiros resultados de BM25 e sentence-BERT por RRF, escolher `k` usando apenas `dev` e comparar lexical, semântico e híbrido em `test`.
+
+**Implementação:** `ri_project/hybrid.py` contém `reciprocal_rank_fusion`, `complete_ranking` e `HybridRRFRetriever`. A fórmula é `1 / (k + rank)`, com rank iniciando em 1 e sem contribuição de uma lista em que o documento não aparece. `tune_rrf_k` em `ri_project/evaluation.py` comparou `k ∈ {10, 60, 100}` sobre as 324 consultas de `dev`, usando Top-100 para cada método, calculou NDCG@10 por consulta e média macro e selecionou o maior valor. Em empate o código escolhe o menor `k`. Os resultados de ajuste estão em `Experiments/rrf_dev_tuning.csv` e `Experiments/rrf_dev_tuning_per_query.csv`. O parâmetro selecionado é congelado para `test`. O ranking híbrido padronizado fica em `Experiments/results_hybrid.csv`; `metrics_per_query.csv` e `metrics_summary.csv` incluem a linha híbrida.
+
+**Decisões e justificativas:** Os valores de `k`, o critério NDCG@10 e a profundidade de candidatos seguem o item 8. Quando BM25 retorna menos de 100 candidatos positivos, sua lista é completada com documentos de score zero em ordem de ID, consistente com o Top-100 lexical usado na avaliação; documentos fora do Top-100 completado recebem contribuição apenas se estiverem no ranking semântico.
+
+**Verificação e resultados:** NDCG@10 médio em `dev`: `k=10` 0,323119; `k=60` 0,311186; `k=100` 0,312105. Foi selecionado `k=10`, sem consultar métricas de `test` para essa escolha. Em `test`, foram avaliadas 323 consultas, com 100 documentos por ranking. O híbrido obteve P@10 0,2560, R@10 0,1694, MAP@10 0,1318, NDCG@10 0,3493 e latência média de 0,0228 s/consulta. Os resultados completos por consulta e agregados estão em `Experiments/metrics_per_query.csv` e `Experiments/metrics_summary.csv`.
+
+**Pendências:** Nenhuma pendência de implementação do item 8. A análise do item 10 e RAG estão registradas como Etapa 10 e pendência posterior, respectivamente.
+
+
+### Etapa 10 — Análise por consulta do reranking
+
+**Estado:** Análise implementada e executada em `test` em 2026-10-20, conforme item 10 de `Trabalho_Pratico_2_RI_2026.md`.
+
+**Objetivo:** Examinar os dois maiores ganhos de NDCG@10 após reranking, um caso com pouca ou nenhuma alteração e a maior piora, mostrando documentos movimentados e explicações apoiadas nos títulos, posições e qrels.
+
+**Implementação:** `build_reranking_analysis` em `ri_project/evaluation.py` compara, por consulta, os rankings híbrido e reranqueado da mesma avaliação. Seleciona os casos pelo delta `NDCG@10 reranqueado − NDCG@10 híbrido`; para o caso mais próximo de zero, empates são desfeitos pelo menor número de documentos que entram ou saem do Top-10. A função exporta `Experiments/reranking_analysis_cases.csv`, `Experiments/reranking_analysis_movements.csv` e `Experiments/reranking_analysis_top10.csv`. Uma célula ao final de `Trabalho2.ipynb` reproduz a seleção e exibe as tabelas. A interpretação textual dos quatro casos está em `Experiments/reranking_analysis.md`.
+
+**Decisões e justificativas:** A seleção e as conclusões usam apenas resultados e julgamentos do conjunto `test`, sem retunar configurações. Delta positivo indica ganho. Para pouca alteração, foi escolhido delta exatamente zero e, entre casos equivalentes, o menor conjunto de mudanças que atravessam o Top-10; isso permite conferir que resultados relevantes mantiveram as posições. A discussão de causas é apresentada como hipótese apoiada nos títulos e posições, sem inferir mecanismos internos do cross-encoder a partir de seus scores.
+
+**Verificação e resultados:** Foram analisadas 323 consultas pareadas. O maior ganho foi `PLAIN-1320` (“Harvard Physicians’ Study II”): NDCG@10 0,0000 → 0,5617 (Δ +0,5617), com três documentos de relevância 1 promovidos das posições 11, 12 e 19 para 1, 3 e 6. O segundo foi `PLAIN-1473` (“kohlrabi”): 0,6309 → 1,0000 (Δ +0,3691), promovendo o único relevante (`MED-4455`) da posição 2 para 1. Em `PLAIN-430` (“Are krill oil supplements better than fish oil capsules?”), NDCG@10 permaneceu 0,5974; os três documentos relevantes conservaram as posições 1, 2 e 4, apesar de oito documentos irrelevantes entrarem/sair do Top-10. A maior piora foi `PLAIN-2540` (“Does Cholesterol Size Matter?”): 0,6153 → 0,3031 (Δ −0,3123); `MED-1890` (relevância 2) caiu da posição 1 para 15 e `MED-1205` (relevância 0) subiu de 21 para 1. As evidências e a interpretação cautelosa estão no Markdown de análise.
+
+**Pendências:** Item 10 concluído. Continuam pendentes as etapas de RAG previstas nos itens 11–12 e a discussão de limitações/latência no relatório final.
