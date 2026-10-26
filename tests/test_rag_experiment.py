@@ -98,6 +98,31 @@ class ExperimentTests(unittest.TestCase):
                 experiment.run_paired_experiment(bundle, generator, directory)
             self.assertEqual(generator.calls, [])
 
+    def test_export_preserves_human_notes_only_for_unchanged_answers(self):
+        with tempfile.TemporaryDirectory() as directory, redirect_stdout(io.StringIO()):
+            rows = experiment.run_paired_experiment(make_bundle(), Generator(), directory)
+            path = Path(directory) / 'rag_experiment.csv'
+            with path.open() as file:
+                reader = csv.DictReader(file)
+                saved, fields = list(reader), reader.fieldnames
+            saved[0]['fidelidade'] = '2'
+            saved[0]['justificativa_fidelidade'] = 'Synthetic human annotation.'
+            with path.open('w', newline='') as file:
+                writer = csv.DictWriter(file, fieldnames=fields)
+                writer.writeheader()
+                writer.writerows(saved)
+            experiment.export_standardized_csv(rows, path)
+            with path.open() as file:
+                preserved = list(csv.DictReader(file))
+            self.assertEqual(preserved[0]['fidelidade'], '2')
+            changed = [dict(row) for row in rows]
+            changed[0]['answer'] = 'Changed answer.'
+            experiment.export_standardized_csv(changed, path)
+            with path.open() as file:
+                invalidated = list(csv.DictReader(file))
+            self.assertEqual(invalidated[0]['fidelidade'], '')
+            self.assertEqual(invalidated[0]['justificativa_fidelidade'], '')
+
     def test_interrupted_run_is_incomplete_and_resumes_saved_answer(self):
         class FailOnce(Generator):
             failed = False

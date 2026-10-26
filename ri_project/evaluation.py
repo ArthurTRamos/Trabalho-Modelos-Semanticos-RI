@@ -254,7 +254,7 @@ def build_reranking_analysis(documents, queries, result, output_dir=EXPERIMENTS_
     """Seleciona casos do item 10 e exporta movimentos de posição em test.
 
     Seleciona os dois maiores ganhos de NDCG@10, o caso mais próximo de zero
-    (desempatando pelo menor número de documentos que entram/saem do Top-10)
+    (desempatando pelo menor número de documentos cuja mudança envolve o Top-10)
     e a maior queda. A comparação usa rankings pareados do resultado da
     avaliação, sem ajustar parâmetros ou modelos com base em test.
     """

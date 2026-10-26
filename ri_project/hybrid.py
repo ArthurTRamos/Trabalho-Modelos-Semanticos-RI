@@ -8,6 +8,8 @@ HYBRID_CANDIDATE_DEPTH = 100
 def complete_ranking(ranking, document_ids, depth):
     """Completa rankings curtos com documentos sem score em ordem de ID."""
     completed = list(ranking[:depth])
+    if len(completed) == depth:
+        return completed
     present = {item['doc_id'] for item in completed}
     for doc_id in sorted(document_ids):
         if doc_id not in present:

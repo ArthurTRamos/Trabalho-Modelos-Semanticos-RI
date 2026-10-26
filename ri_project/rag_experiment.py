@@ -52,13 +52,17 @@ def _digest(value):
 
 
 def export_standardized_csv(rows, path):
-    """Formato do item 15; notas humanas pendentes ficam em branco, não zero."""
+    """Formato do item 15; preserva notas apenas para os mesmos textos/contextos."""
     criteria = ('fidelidade', 'completude', 'utilidade', 'rastreabilidade')
     columns = ['query_id', 'query', 'condition', 'context_doc_ids', 'prompt', 'answer']
     columns += [field for criterion in criteria
                 for field in (criterion, f'justificativa_{criterion}')]
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
+    previous = {}
+    if path.exists():
+        with path.open(encoding='utf-8', newline='') as file:
+            previous = {(r['query_id'], r['condition']): r for r in csv.DictReader(file)}
     with path.open('w', encoding='utf-8', newline='') as file:
         writer = csv.DictWriter(file, fieldnames=columns)
         writer.writeheader()
@@ -71,6 +75,13 @@ def export_standardized_csv(rows, path):
                 context_doc_ids=json.dumps([d['doc_id'] for d in row['contexts']]),
                 prompt=row['prompt'], answer=row['answer'],
             )
+            old = previous.get((result['query_id'], result['condition']))
+            if (old and all(old.get(k) == result[k] for k in ('query', 'prompt', 'answer'))
+                    and json.loads(old.get('context_doc_ids', '[]')) ==
+                    json.loads(result['context_doc_ids'])):
+                for criterion in criteria:
+                    result[criterion] = old.get(criterion, '')
+                    result[f'justificativa_{criterion}'] = old.get(f'justificativa_{criterion}', '')
             if not with_rag:
                 result['rastreabilidade'] = 'N/A'
                 result['justificativa_rastreabilidade'] = 'Nenhum contexto externo fornecido à LLM.'
@@ -201,7 +212,7 @@ def run_paired_experiment(bundle, generator, output_dir):
         writer.writeheader()
         writer.writerows(rows)
     comparison = ['# Item 12 — Sem RAG × com RAG\n',
-                  'Respostas experimentais; avaliação humana ainda não realizada.\n']
+                  'Respostas experimentais; avaliação humana registrada separadamente na fase de avaliação.\n']
     for index, case in enumerate(cases):
         a, b = rows[index * 2:index * 2 + 2]
         comparison.extend([
