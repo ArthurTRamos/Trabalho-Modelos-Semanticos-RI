@@ -50,3 +50,12 @@ A execução remota no Colab permanece não verificada. A validação local do n
 4. Montar o arquivo de entrega no Moodle com fontes, README e CSVs completos. Excluir dataset, pesos, embeddings, ambientes e caches. O ZIP de resultados do Colab é uma cópia para transferência e inclui embeddings; não é, sozinho, o pacote final de entrega.
 
 A comparação com `ir_measures` é recomendada pelo enunciado, não obrigatória. Não foi feita; foram usados cálculos independentes e testes numéricos. Um segundo avaliador e o mascaramento são recomendações, já suportadas pelo código.
+
+## Atualização — simulação por IA dos itens 13–14
+
+Após esta revisão, foram preenchidas duas passagens de avaliação por IA e produzida a análise dos três casos em `Experiments/rag_ai_review/`. Os julgamentos vieram do mesmo agente, sem independência e sem cegamento; relatórios e arquivos declaram essa origem. A avaliação humana exigida pelo item 13 continua pendente e os formulários humanos originais não foram preenchidos. O registro detalhado está na última seção de `Notas_Projeto_RI.md` e em `Experiments/rag_ai_review/analise_itens_13_14.md`.
+
+
+## Atualização — protocolo autorizado informado pelo grupo
+
+O usuário informou autorização posterior do professor para realizar a avaliação com IA. As duas passagens foram consolidadas no fluxo principal com os identificadores avaliador_1 e avaliador_2; os arquivos finais estão em `Experiments/rag_experiment/evaluation/` e o CSV padronizado principal foi preenchido. A análise integrada dos itens 13–14 é `analise_itens_13_14.md`. A modalidade e suas limitações permanecem documentadas em `Notas_Projeto_RI.md`: duas passagens do mesmo agente, sem independência entre pessoas. O estado de conclusão considera a modalidade autorizada informada pelo grupo, sem alterar a redação do enunciado original.

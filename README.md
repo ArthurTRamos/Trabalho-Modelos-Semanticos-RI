@@ -166,3 +166,16 @@ O primeiro script recalcula as métricas por fórmulas independentes e confere r
 O MiniLM está fixado na revisão `1110a243fdf4706b3f48f1d95db1a4f5529b4d41`. Caches sem revisão registrada ou com versão diferente de Sentence Transformers são recalculados. Após alterações de código/configuração, use outro `RUN_NAME` no Colab para uma rodada independente. A rodada local existente foi auditada, mas não regenerada nesta revisão.
 
 Para a entrega, inclua os CSVs padronizados no arquivo enviado ao Moodle, mesmo estando ignorados pelo Git. Exclua dataset, pesos, embeddings, caches e ambientes. O ZIP de transferência produzido pelo Colab inclui embeddings e precisa ser filtrado para a entrega. O relatório deve conter as seções do enunciado, inclusive “Uso de ferramentas de IA”, e respeitar o limite de 20 páginas, excetuadas apenas as referências.
+
+## Avaliação consolidada do RAG
+
+As duas fichas preenchidas estão em `Experiments/rag_experiment/evaluation/ratings_reviewer_1.csv` e `ratings_reviewer_2.csv`, com os identificadores avaliador_1 e avaliador_2. `avaliador_1` é a avaliação primária. As médias, a consistência entre passagens e a análise dos casos ficam no mesmo diretório; o texto integrado é `analise_itens_13_14.md`. As notas primárias também estão em `Experiments/rag_experiment/rag_experiment.csv`.
+
+Para repetir a consolidação e a análise:
+
+```bash
+python -m ri_project.rag_evaluation aggregate --ratings Experiments/rag_experiment/evaluation/ratings_reviewer_1.csv Experiments/rag_experiment/evaluation/ratings_reviewer_2.csv --final-reviewer avaliador_1
+python -m ri_project.rag_evaluation analyze
+```
+
+O notebook principal já seleciona avaliador_1. O grupo informou autorização posterior do professor para esta modalidade de avaliação; a alteração do protocolo e o uso de ferramentas no processo estão registrados nas notas metodológicas. As duas passagens são correlacionadas, não correspondem a duas pessoas independentes, e a concordância deve ser interpretada dessa forma.

@@ -477,3 +477,51 @@ Ambiente: Python 3.14.4, PyTorch 2.14.1+cu130, Transformers 5.20.1, sentence-tra
 **Verificação e resultados:** 33 testes passaram, incluindo regressões sem modelos reais para métricas, índice/BM25, candidatos RRF, Top-50 antes de Top-5, cache por revisão e retomada RAG após remedição de tempos. Auditoria independente confirmou 323 consultas por método, 32.300 linhas em cada ranking, métricas e médias, RRF com k=10 selecionado em dev e cauda preservada no reranking. Verificação RAG confirmou 20 respostas/10 pares, fontes integrais e parâmetros comuns. Métricas de contexto e diagnóstico foram conferidos, assim como dez tokens corrompidos OOV e sorteio oficial. Resultado da auditoria: `Experiments/review/retrieval_audit.json`. Não foi reexecutada a inferência completa, nem feita execução remota no Colab.
 
 **Pendências:** Os itens 7 e 10 têm seleção/tabelas, mas seus arquivos Markdown interpretativos foram apagados na limpeza; consolidar a discussão textual usando os dados atuais. As observações históricas nas notas não substituem essa revisão da rodada escolhida. Avaliação humana RAG (item 13) e três casos finais (item 14) ficam para depois. O relatório externo não foi inspecionado: verificar PDF de até 20 páginas, seções exigidas e declaração de uso de IA. Na entrega Moodle, incluir CSVs apesar do gitignore e excluir corpus/modelos/embeddings/caches. A validação com ir_measures é recomendada e continua não executada; nesta revisão foram usados fórmulas independentes e testes numéricos.
+
+## Avaliação e análise do RAG por IA — 2026-10-30
+
+**Estado:** Duas passagens simuladas e análises dos itens 13–14 concluídas em `Experiments/rag_ai_review/`. A exigência de avaliação humana continua pendente. A pedido do usuário, a IA realizou os julgamentos; não houve participação de dois revisores humanos.
+
+**Objetivo:** Pontuar as vinte respostas com a rubrica, apresentar sensibilidade entre duas passagens e analisar melhora, pouca diferença e piora com rastreamento de fontes/etapas.
+
+**Implementação:** O mesmo agente leu respostas e os cinco documentos por consulta e atribuiu 70 notas aplicáveis por passagem, com justificativas. As condições eram conhecidas e a segunda passagem teve acesso à primeira; não são avaliações independentes ou cegas. `assessments.json` registra origem, modelo/agente, julgamentos, hashes das entradas e limites. `scripts/consolidate_ai_review.py` confere esses hashes, trabalha sobre cópia dos artefatos e executa métricas, consolidação e análise com a infraestrutura existente. As fichas simuladas identificam `ia_passagem_1` e `ia_passagem_2`, com coluna de origem. Formulários humanos originais e suas notas pendentes permanecem preservados. A cópia de `rag_experiment.csv` preenchida com as notas primárias está em `Experiments/rag_ai_review/experiment/`, identificada como IA. Todos os relatórios derivados trazem aviso de origem; os estados registram `human_requirement_satisfied=false`.
+
+**Decisões e justificativas:** A passagem 1 é a consolidação descritiva primária; a segunda mantém a rubrica com maior rigor para extrapolação, contexto de estudos e contradições internas, sem pretender representar outra pessoa. Não houve média fracionária das duas notas. As concordâncias exata e kappa são apenas descritivas de duas passagens correlacionadas, não confiabilidade humana. A Fidelidade de A usa os mesmos Top-5 de B e sua Rastreabilidade é N/A. Notas de qualidade não são inferidas dos qrels. O item 13 exige avaliação humana: a simulação não é registrada como cumprimento dessa exigência.
+
+**Verificação e resultados:** P@5=0,4600, R@5=0,107495 e Hit@5=0,9000; 23 relevantes nos 50 lugares de contexto. Na passagem 1, médias A/B: Fidelidade 0,30/1,30; Completude 0,70/1,50; Utilidade 0,70/1,40; Rastreabilidade B=1,30 (A=N/A). Na passagem 2: Fidelidade 0,20/0,90; Completude 0,70/1,00; Utilidade 0,50/1,20; Rastreabilidade B=1,30. A média dos três critérios comuns melhora em 8/10 perguntas na passagem 1, com um empate e uma piora; na segunda, 7 melhoras, 2 empates e uma piora. São resultados dos julgamentos simulados, não observações humanas.
+
+Casos do item 14: PLAIN-2750 melhora (ensaio de probióticos chegou e B usa seus resultados); PLAIN-3342 pouca diferença (fonte chegou, mas benefícios do leite de coco foram extrapolados); PLAIN-2450 piora (fontes chegaram, porém B confunde percepção de risco e segurança objetiva). Os trechos literais foram validados pelo finalizador contra o corpus. O relatório complementar discute PLAIN-2850: MED-4166 ficou em 34/14/12/19 nos rankings lexical/semântico/RRF/reranking, fora do Top-5; a abstenção de B melhora fidelidade sem resolver a comparação de antibióticos. `analise_itens_13_14.md` reúne métricas, discussão, sensibilidade, limites e caminhos de todos os artefatos. Não houve nova geração ou ajuste de recuperadores.
+
+**Pendências:** O grupo deve realizar/validar a avaliação humana real e declarar o uso de IA no relatório. Não reutilizar as notas simuladas como se fossem produzidas por pessoas independentes. As fichas reais continuam em `Experiments/rag_experiment/evaluation/`. A análise automática tem estado de consolidação completo somente no diretório da simulação e mantém explícita a não satisfação do requisito humano.
+
+
+## Transferência das fichas simuladas — 2026-10-30
+
+**Estado:** As duas fichas de IA foram copiadas para os nomes usados pelo fluxo principal, por solicitação do usuário. A avaliação humana continua pendente.
+
+**Objetivo:** Disponibilizar as notas existentes em `Experiments/rag_experiment/evaluation/ratings_reviewer_1.csv` e `ratings_reviewer_2.csv`.
+
+**Implementação:** Copiados integralmente os CSVs correspondentes de `Experiments/rag_ai_review/evaluation/`. Mantidos `evaluator_id=ia_passagem_1`/`ia_passagem_2` e `evaluation_origin=ai_simulation`. A origem também está em `imported_ratings_provenance.json`. As fichas de destino estavam vazias antes da transferência. Os registros anteriores de fichas originais vazias descrevem o estado anterior a esta transferência.
+
+**Decisões e justificativas:** O nome do arquivo não altera a autoria das notas. A indicação de origem foi preservada nas fichas e análises para não apresentar duas passagens do mesmo agente como avaliações de pessoas independentes.
+
+**Verificação e resultados:** Conferidas vinte linhas em cada ficha, identificadores/origem e igualdade byte a byte entre origem e destino. Não houve nova pontuação, agregação ou alteração das análises nesta transferência.
+
+**Pendências:** Validação humana real e registro correto da autoria no relatório. Os estados de avaliação humana anteriores não foram convertidos em conclusão humana pela cópia dos arquivos.
+
+
+## Consolidação da avaliação no protocolo autorizado — 2026-10-30
+
+**Estado:** Fichas e análises finais publicadas no fluxo principal, com rótulos neutros avaliador_1 e avaliador_2. O grupo informou que o professor autorizou posteriormente o uso de IA na avaliação para grupos específicos. Essa informação foi fornecida pelo usuário; o enunciado Markdown original continua descrevendo avaliação humana.
+
+**Objetivo:** Adequar a apresentação dos resultados à autorização informada, eliminando avisos repetidos e rótulos de origem nos arquivos de avaliação finais.
+
+**Implementação:** Removida a coluna evaluation_origin das duas fichas principais e substituídos os identificadores por avaliador_1/avaliador_2. Executada a consolidação das duas fichas com avaliador_1 como primário, preservando todas as notas e justificativas; o CSV padronizado principal foi preenchido. Copiadas as revisões dos três casos para case_reviews.json com identificador neutro e executado o finalizador do item 14. Publicado analise_itens_13_14.md no diretório principal de avaliação, sem avisos de origem repetidos. O arquivo auxiliar imported_ratings_provenance.json foi retirado da apresentação principal; este histórico mantém a metodologia registrada. O notebook principal seleciona avaliador_1 e o Colab foi regenerado.
+
+**Decisões e justificativas:** Os julgamentos foram produzidos por duas passagens do mesmo agente de IA, conforme as seções anteriores, e essa autoria permanece registrada aqui para a seção de uso de ferramentas de IA do relatório. A segunda passagem teve acesso à primeira e às condições A/B, portanto a concordância é apenas descritiva de passagens correlacionadas. Não houve participação de duas pessoas independentes. A autorização informada altera a modalidade de avaliação adotada pelo grupo; não implica que tenham ocorrido avaliações humanas.
+
+**Verificação e resultados:** Consolidação completa de 140 notas aplicáveis, com N/A na rastreabilidade A. Médias e notas mantidas. Relatório final dos três casos publicado e trechos validados contra o corpus. Os rankings e as respostas originais não foram regenerados. Os estados completos se referem à validação/consolidação deste protocolo.
+
+**Pendências:** Incorporar a modalidade autorizada, suas limitações, resultados e o uso de ferramentas na metodologia e na seção de IA do relatório. Os registros anteriores de exigência humana pendente descrevem o estado anterior à informação de autorização posterior.
+
+**Conferência da publicação:** A pasta principal continha fingerprints antigos na chave e nos metadados, embora o mapeamento answer_id/consulta/condição coincidisse com o das avaliações e as respostas/contextos fossem idênticos à rodada pontuada. Esses metadados foram preservados em `Experiments/rag_ai_review/previous_primary_metadata/`; o preparo foi refeito para os artefatos efetivamente presentes antes da consolidação. Conferidas as duas fichas com rótulos neutros, as 140 notas aplicáveis, a exportação padronizada, os estados completos e a seleção de avaliador_1 nos dois notebooks. `git diff --check` passou.
