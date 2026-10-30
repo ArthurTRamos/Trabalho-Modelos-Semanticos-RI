@@ -7,6 +7,8 @@ HYBRID_CANDIDATE_DEPTH = 100
 
 def complete_ranking(ranking, document_ids, depth):
     """Completa rankings curtos com documentos sem score em ordem de ID."""
+    if depth < 0:
+        raise ValueError('depth não pode ser negativo.')
     completed = list(ranking[:depth])
     if len(completed) == depth:
         return completed
@@ -88,7 +90,7 @@ class HybridRRFRetriever:
         """Busca candidatos nos dois métodos e retorna o ranking híbrido."""
         if top_k <= 0:
             return []
-        depth = max(top_k, self.candidate_depth)
+        depth = self.candidate_depth
         lexical = self.lexical_retriever.search(query, top_k=depth)
         semantic = self.semantic_retriever.search(query, top_k=depth)
         rankings = {

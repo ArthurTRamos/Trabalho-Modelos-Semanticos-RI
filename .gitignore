@@ -1,5 +1,6 @@
 .venv
 nfcorpus
+nfcorpus*.zip
 *.csv
 Experiments/
 __pycache__/

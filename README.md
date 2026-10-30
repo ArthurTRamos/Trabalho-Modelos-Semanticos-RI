@@ -25,6 +25,15 @@ Projeto do Trabalho Prático 2 de Recuperação da Informação. O notebook coor
 
 `Experiments/` é ignorada pelo Git; execute novamente o notebook para regenerar os resultados locais.
 
+Para limpar os resultados e caches anteriores e executar todas as células em um novo kernel usando o Python do projeto:
+
+```bash
+./.venv/bin/python scripts/run_notebook.py --clean --require-cuda
+```
+
+`--clean` remove `Experiments/`, caches Python/Jupyter do projeto e as saídas antigas do notebook antes da execução. Isso inclui embeddings, pesos baixados nesse cache, respostas e fichas de avaliação humana anteriores. O NF-Corpus original, o código e `.venv/` são preservados. Caches novos de Hugging Face, NLTK, Matplotlib, IPython e Jupyter são criados em `Experiments/cache/`, sem reutilizar os caches globais dos modelos. `--require-cuda` exige GPU disponível. Sem `--clean`, os caches existentes podem ser reutilizados. O script instala as dependências da célula inicial, atualiza as saídas no notebook e registra o estado de cada célula. Interrompe se detectar erro; resultados completos exigem `status=complete` no arquivo de estado.
+
+
 ## Organização do código
 
 - `ri_project/config.py`: caminhos e parâmetros compartilhados.
@@ -40,14 +49,14 @@ Projeto do Trabalho Prático 2 de Recuperação da Informação. O notebook coor
 - `ri_project/rag_experiment.py`: sorteio oficial e experimento pareado sem/com RAG, com checkpoints.
 - `ri_project/rag_evaluation.py`: métricas de contexto, fichas mascaradas, validação das notas humanas, médias e concordância.
 - `ri_project/rag_analysis.py`: diagnóstico por etapa, sugestões de casos e relatório com evidências conferidas no corpus.
-- `RAG_Colab.ipynb`: geração das vinte respostas em GPU remota, com código e contextos incorporados.
 - Rankings híbridos e ajuste ficam em `Experiments/results_hybrid.csv` e `Experiments/rrf_dev_tuning*.csv`; reranking em `Experiments/results_reranking.csv`.
 - `ri_project/evaluation.py`: métricas, rankings e comparação por consulta.
 - `Trabalho2.ipynb`: fluxo de execução e visualização dos resultados.
+- `scripts/run_notebook.py`: execução completa em kernel isolado, com limpeza opcional e logs por célula.
 
 ## Linguagem e Bibliotecas
 
-Python 3.10 ou superior (respeite também os requisitos das versões de bibliotecas instaladas); NLTK, NumPy, pandas, Matplotlib, scikit-learn, sentence-transformers, PyTorch, Accelerate e Transformers. A execução local de 2026-10-26 usa Python 3.14.4, PyTorch 2.14.1+cu130, Transformers 5.20.1, sentence-transformers 6.1.0 e Accelerate 1.15.0. O manifesto do RAG registra Python, PyTorch e Transformers; `Experiments/execution_2026-10-26/environment.json` registra as demais versões e a GPU. O notebook Colab instala suas próprias versões e registra o ambiente remoto separadamente.
+Python 3.10 ou superior (respeite também os requisitos das versões de bibliotecas instaladas); NLTK, NumPy, pandas, Matplotlib, scikit-learn, sentence-transformers, PyTorch, Accelerate e Transformers. O ambiente local de 2026-10-30 usa Python 3.14.4, PyTorch 2.14.1+cu130, Transformers 5.20.1, sentence-transformers 6.1.0 e Accelerate 1.15.0. O manifesto do RAG registra Python, PyTorch e Transformers; `Experiments/execution_2026-10-30/environment.json` registra as demais versões e a GPU da nova execução.
 
 ## Modelos
 
@@ -57,7 +66,7 @@ BM25 para recuperação lexical, `sentence-transformers/all-MiniLM-L6-v2` para r
 
 A busca semântica e a LLM selecionam CUDA quando disponível e usam CPU como alternativa. Execute as células do notebook de cima para baixo: leitura e pré-processamento, índice/BM25, ajuste e avaliação de tolerância a erros, embeddings semânticos, ajuste RRF em `dev`, avaliação do cross-encoder em `dev`, avaliação comparativa em `test`, comparação dos métodos, geração com RAG, métricas do contexto, consolidação das notas humanas e análise de falhas. O manifesto da LLM informa CPU/GPU, dispositivo e dtype efetivamente usados.
 
-A execução local de 2026-10-26 utiliza a NVIDIA GeForce RTX 4050 Laptop GPU (6 GB), com a LLM em BF16. O notebook executado e o log ficam em `Experiments/execution_2026-10-26/`. Os resultados híbridos e de reranking foram recalculados após corrigir a complementação de listas já completas: a fusão agora utiliza exatamente os Top-100 de cada método. Os números e as análises anteriores à correção foram preservados nessa pasta como histórico e não devem ser usados como resultado final.
+O ambiente local utiliza a NVIDIA GeForce RTX 4050 Laptop GPU (6 GB), com a LLM em BF16. O notebook principal pode ser executado localmente; `Trabalho2_Colab.ipynb` oferece o fluxo completo no Google Colab, conforme a seção ao final deste documento. Logs, ambiente, estado e cópia executada ficam em `Experiments/execution_<data>/`.
 
 ## RAG — item 11
 
@@ -96,7 +105,7 @@ As seções finais do notebook executam esta fase sobre os resultados salvos, se
 python -m ri_project.rag_evaluation prepare
 ```
 
-Os artefatos ficam em `Experiments/rag_experiment/evaluation/`. `context_metrics_per_query.csv` registra Precision@5 (`P5`), Recall@5 (`R5`) e Hit@5 (`Hit5`) dos cinco documentos efetivamente enviados; `context_metrics_summary.csv` guarda médias macro das dez consultas. Recall usa todos os documentos de grau positivo nos qrels. Na execução de 2026-10-26: P@5 0,46; R@5 0,1075; Hit@5 0,90. Esses valores se referem às dez consultas do RAG, não à avaliação Top-10 das 323 consultas.
+Os artefatos ficam em `Experiments/rag_experiment/evaluation/`. `context_metrics_per_query.csv` registra Precision@5 (`P5`), Recall@5 (`R5`) e Hit@5 (`Hit5`) dos cinco documentos efetivamente enviados; `context_metrics_summary.csv` guarda médias macro das dez consultas. Recall usa todos os documentos de grau positivo nos qrels. Essas métricas se referem às dez consultas do RAG, não à avaliação Top-10 das 323 consultas. Consulte o CSV da execução atual para os valores medidos.
 
 Para a avaliação humana, cada integrante deve ler apenas `human_review.md` e preencher sua ficha `ratings_reviewer_1.csv` ou `ratings_reviewer_2.csv`, mantendo IDs e justificando as notas 0–2. O segundo avaliador é opcional. A ordem das vinte respostas é embaralhada com seed 42 e os rótulos de condição ficam em `blind_key.json`, que não deve ser consultado antes da avaliação. Estilo e citações podem sugerir a condição, portanto o mascaramento não garante cegamento completo. Os mesmos Top-5 são apresentados como referência para avaliar a fidelidade das duas respostas de cada pergunta. Rastreabilidade é avaliada provisoriamente na ficha mascarada e, ao revelar a condição A, substituída por N/A e excluída da média. Não há atribuição automática de notas de qualidade.
 
@@ -116,22 +125,44 @@ Após consolidar as notas, `failure_case_selection.json` sugere três consultas 
 python -m ri_project.rag_evaluation analyze
 ```
 
-`failure_analysis.md` somente é publicado após notas e revisões humanas completas. Campos pendentes produzem um arquivo de estado, sem inventar casos ou conclusões. Um rascunho qualitativo com apoio de IA para os resultados atuais está em `failure_analysis_preliminary.md`; ele não contém notas humanas, suas categorias são provisórias e não deve ser mostrado aos avaliadores antes da etapa mascarada. Todos os resultados continuam em `Experiments/`, ignorada pelo Git.
+`failure_analysis.md` somente é publicado após notas e revisões humanas completas. Campos pendentes produzem um arquivo de estado, sem inventar casos ou conclusões. Todos os resultados continuam em `Experiments/`, ignorada pelo Git.
 
-## Execução na extensão Colab
 
-Abra `RAG_Colab.ipynb`, selecione **Select Kernel → Colab** e um runtime com GPU e execute todas as células. A extensão e sua autenticação são operadas pelo VS Code; não são controladas pelo terminal local desta sessão. O notebook verifica CUDA antes de gerar, inclui os contextos já recuperados e um snapshot do código validado por SHA-256 e não depende de arquivos locais acessíveis pelo runtime remoto. O empacotamento usa apenas as fontes recuperadas, sem respostas ou pesos de modelos.
+## Verificação
 
-As vinte respostas da execução GPU ficam em `Experiments/rag_experiment_gpu/` no runtime e podem ser baixadas no ZIP produzido na última célula ou pelo explorador Colab, opção **Download**. Salve o ZIP antes de encerrar o runtime. Uma execução GPU é um experimento separado da execução CPU; não combine respostas obtidas em precisões/dispositivos diferentes na mesma comparação pareada.
-
-Depois de alterar o código ou regenerar os contextos, atualize o snapshot:
+Para conferir os contratos de integração, sem inferência real:
 
 ```bash
-python scripts/build_colab_rag.py
+python -m unittest discover -s tests -v
 ```
 
-Para verificar os contratos de integração offline (componentes simulados, sem inferência real):
+## Execução completa no Google Colab
+
+Abra `Trabalho2_Colab.ipynb` pelo site do Google Colab e selecione um ambiente com GPU. O notebook contém as fontes de `ri_project/`, scripts auxiliares e testes em células visíveis, além do fluxo completo do notebook principal. Não exige clone do repositório.
+
+Na primeira célula, configure `RUN_NAME` e, opcionalmente, `DATASET_ZIP` com um caminho no Drive. Sem caminho, será solicitado upload de um ZIP contendo o NF-Corpus original (`corpus.jsonl`, `queries.jsonl` e `qrels/`). Os hashes são conferidos contra os dados locais usados na geração do notebook. Execute as células em ordem e autorize o Drive: os resultados ficam em `MyDrive/Trabalho2_RI/<RUN_NAME>/Experiments/`. Cada nova rodada independente deve usar outro nome. Os pesos dos modelos ficam no armazenamento temporário do Colab; embeddings, respostas, fichas e métricas ficam no Drive. A última célula exporta um ZIP dos resultados e oferece download opcional.
+
+A avaliação humana usa `Experiments/rag_experiment/evaluation/ratings_reviewer_1.csv` e, opcionalmente, `ratings_reviewer_2.csv`, com um arquivo por avaliador. As respostas produzidas no Colab pertencem a uma nova rodada e devem ser avaliadas com suas respectivas fichas. Para consolidar fichas salvas em uma nova sessão, execute a preparação até o dataset e depois apenas as seções dos itens 13–14.
+
+Para atualizar o notebook incorporando mudanças nas fontes ou no notebook principal:
 
 ```bash
-python3 -m unittest discover -s tests -v
+./.venv/bin/python scripts/build_colab_notebook.py
 ```
+
+A geração exige `nbformat` e o dataset original local. `Trabalho2_Colab.ipynb` é distribuído sem saídas; a validação local de estrutura e sintaxe não substitui a execução no serviço do Colab.
+
+## Revisão e auditoria dos resultados
+
+Consulte `Revisao_Requisitos.md` para o estado dos quinze requisitos, as verificações realizadas e as pendências do relatório. Para auditar os CSVs existentes, sem inferência neural:
+
+```bash
+python scripts/audit_results.py
+python scripts/verify_rag_experiment.py
+```
+
+O primeiro script recalcula as métricas por fórmulas independentes e confere rankings, RRF e preservação da cauda. O segundo verifica as vinte respostas pareadas e as fontes. A avaliação humana continua sendo preenchida pelos integrantes.
+
+O MiniLM está fixado na revisão `1110a243fdf4706b3f48f1d95db1a4f5529b4d41`. Caches sem revisão registrada ou com versão diferente de Sentence Transformers são recalculados. Após alterações de código/configuração, use outro `RUN_NAME` no Colab para uma rodada independente. A rodada local existente foi auditada, mas não regenerada nesta revisão.
+
+Para a entrega, inclua os CSVs padronizados no arquivo enviado ao Moodle, mesmo estando ignorados pelo Git. Exclua dataset, pesos, embeddings, caches e ambientes. O ZIP de transferência produzido pelo Colab inclui embeddings e precisa ser filtrado para a entrega. O relatório deve conter as seções do enunciado, inclusive “Uso de ferramentas de IA”, e respeitar o limite de 20 páginas, excetuadas apenas as referências.

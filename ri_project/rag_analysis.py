@@ -159,11 +159,13 @@ def select_analysis_cases(records):
     improvements = [r for r in scores if r['mean_delta_common'] > 0]
     if improvements:
         chosen = sorted(improvements, key=lambda r: (-r['mean_delta_common'], r['query_id']))[0]
-        selected.append({'category': 'melhora', **chosen}); used.add(chosen['query_id'])
+        selected.append({'category': 'melhora', **chosen})
+        used.add(chosen['query_id'])
     failures = [r for r in scores if r['query_id'] not in used and r['mean_delta_common'] <= 0]
     if failures:
         chosen = sorted(failures, key=lambda r: (r['mean_delta_common'], r['query_id']))[0]
-        selected.append({'category': 'nao_ajudou', **chosen}); used.add(chosen['query_id'])
+        selected.append({'category': 'nao_ajudou', **chosen})
+        used.add(chosen['query_id'])
     # No máximo um ponto de mudança total entre os critérios. Evita tratar
     # como empate uma melhora grande em um critério que cancela piora em outro.
     neutral = [r for r in scores if r['query_id'] not in used

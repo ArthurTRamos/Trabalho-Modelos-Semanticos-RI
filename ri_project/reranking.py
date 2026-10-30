@@ -127,7 +127,13 @@ class HybridRerankingRetriever:
         self.last_hybrid_retrieval_seconds = 0.0
 
     def search(self, query, top_k=100):
+        """Reranqueia toda a cabeça configurada antes de cortar a saída."""
+        if top_k <= 0:
+            self.last_hybrid_retrieval_seconds = 0.0
+            self.reranker.last_reranking_seconds = 0.0
+            return []
         start = time.perf_counter()
-        ranking = self.hybrid_retriever.search(query, top_k=top_k)
+        depth = max(top_k, self.reranker.rerank_depth)
+        ranking = self.hybrid_retriever.search(query, top_k=depth)
         self.last_hybrid_retrieval_seconds = time.perf_counter() - start
-        return self.reranker.rerank(query, ranking, self.documents)
+        return self.reranker.rerank(query, ranking, self.documents)[:top_k]

@@ -89,6 +89,16 @@ class ExperimentTests(unittest.TestCase):
             experiment.run_paired_experiment(changed, generator, directory)
             self.assertEqual(len(generator.calls), 40, 'Contexto alterado invalida a execução anterior.')
 
+    def test_remeasured_timings_do_not_invalidate_responses(self):
+        generator = Generator()
+        bundle = make_bundle()
+        bundle['cases'][0]['retrieval_and_reranking_seconds'] = 1.0
+        with tempfile.TemporaryDirectory() as directory, redirect_stdout(io.StringIO()):
+            experiment.run_paired_experiment(bundle, generator, directory)
+            bundle['cases'][0]['retrieval_and_reranking_seconds'] = 2.0
+            experiment.run_paired_experiment(bundle, generator, directory)
+        self.assertEqual(len(generator.calls), 20)
+
     def test_protocol_mismatch_rejected_before_generation(self):
         generator = Generator()
         with tempfile.TemporaryDirectory() as directory:

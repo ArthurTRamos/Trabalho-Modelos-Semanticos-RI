@@ -51,6 +51,20 @@ def _digest(value):
                                     ensure_ascii=False).encode()).hexdigest()
 
 
+def _without_timings(value):
+    """Remove medições voláteis da identidade, mantendo entradas e configuração.
+
+    Tempos continuam registrados no pacote original. Medir novamente a mesma
+    recuperação não deve invalidar respostas já geradas.
+    """
+    if isinstance(value, dict):
+        return {key: _without_timings(item) for key, item in value.items()
+                if not key.endswith('_seconds')}
+    if isinstance(value, list):
+        return [_without_timings(item) for item in value]
+    return value
+
+
 def export_standardized_csv(rows, path):
     """Formato do item 15; preserva notas apenas para os mesmos textos/contextos."""
     criteria = ('fidelidade', 'completude', 'utilidade', 'rastreabilidade')
@@ -168,7 +182,7 @@ def run_paired_experiment(bundle, generator, output_dir):
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     manifest = generator.manifest()
-    signature = _digest({'bundle': bundle, 'manifest': manifest,
+    signature = _digest({'bundle': _without_timings(bundle), 'manifest': manifest,
                          'config': asdict(generator.config)})
     status = {'status': 'incomplete', 'expected_responses': 20,
               'completed_responses': 0, 'experiment_signature': signature,

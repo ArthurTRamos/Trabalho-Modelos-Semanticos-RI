@@ -10,15 +10,22 @@ import torch
 from sentence_transformers import SentenceTransformer
 
 from .config import (EXPERIMENTS_DIR, SEMANTIC_BATCH_SIZE,
-                     SEMANTIC_MODEL_NAME, SEMANTIC_NORMALIZE_EMBEDDINGS)
+                     SEMANTIC_MODEL_NAME, SEMANTIC_MODEL_REVISION,
+                     SEMANTIC_NORMALIZE_EMBEDDINGS)
 
 
 class SemanticRetriever:
     def __init__(self, documents, queries, qrels, model_name=SEMANTIC_MODEL_NAME,
                  cache_dir=None, batch_size=SEMANTIC_BATCH_SIZE,
-                 normalize=SEMANTIC_NORMALIZE_EMBEDDINGS):
+                 normalize=SEMANTIC_NORMALIZE_EMBEDDINGS,
+                 revision=SEMANTIC_MODEL_REVISION):
+        if batch_size <= 0:
+            raise ValueError('batch_size deve ser positivo.')
+        if not normalize:
+            raise ValueError('A busca por cosseno requer embeddings normalizados.')
         self.qrels, self.queries = qrels, queries
         self.model_name, self.batch_size, self.normalize = model_name, batch_size, normalize
+        self.revision = revision
         self.cache_dir = Path(cache_dir or (EXPERIMENTS_DIR / 'semantic'))
         self.cache_dir.mkdir(parents=True, exist_ok=True)
         self.embeddings_path = self.cache_dir / 'all_minilm_l6_v2_document_embeddings.npy'
@@ -31,11 +38,13 @@ class SemanticRetriever:
         ]
         hasher = hashlib.sha256()
         for doc_id, text in zip(self.document_ids, self.document_texts):
-            hasher.update(doc_id.encode()); hasher.update(b'\0')
-            hasher.update(text.encode()); hasher.update(b'\n')
+            hasher.update(doc_id.encode())
+            hasher.update(b'\0')
+            hasher.update(text.encode())
+            hasher.update(b'\n')
         self.corpus_sha256 = hasher.hexdigest()
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
-        self.model = SentenceTransformer(model_name, device=self.device)
+        self.model = SentenceTransformer(model_name, revision=revision, device=self.device)
         self.max_seq_length = int(self.model.max_seq_length)
         token_lengths = []
         for start in range(0, len(self.document_texts), batch_size):
@@ -56,6 +65,8 @@ class SemanticRetriever:
                 cached_ids = json.load(f)
             cached = np.load(self.embeddings_path, mmap_mode='r')
             valid = (manifest.get('model_name') == self.model_name and
+                manifest.get('model_revision') == self.revision and
+                manifest.get('sentence_transformers_version') == sentence_transformers.__version__ and
                 manifest.get('corpus_sha256') == self.corpus_sha256 and
                 manifest.get('normalized_embeddings') is self.normalize and
                 manifest.get('max_seq_length_tokens') == self.max_seq_length and
@@ -76,7 +87,8 @@ class SemanticRetriever:
         with self.doc_ids_path.open('w', encoding='utf-8') as f:
             json.dump(self.document_ids, f, ensure_ascii=False)
         self.manifest = {
-            'model_name': self.model_name, 'corpus_sha256': self.corpus_sha256,
+            'model_name': self.model_name, 'model_revision': self.revision,
+            'corpus_sha256': self.corpus_sha256,
             'document_count': len(self.document_ids),
             'embedding_dimension': int(self.embeddings.shape[1]),
             'normalized_embeddings': self.normalize,

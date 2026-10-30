@@ -13,9 +13,11 @@ Notas de implementação e decisões para apoiar a redação do relatório.
 
 ## Estado geral
 
-Estão implementados pré-processamento, índice invertido, BM25, tolerância a erros com ajuste em dev, recuperação semântica, comparação lexical × semântica, RRF ajustado em dev, reranking Top-50, análise por consulta e geração com/sem RAG nas dez perguntas oficiais (itens 1–12). O fluxo foi executado na GPU local em 2026-10-26 e as vinte respostas passaram pela verificação de pareamento e integridade das fontes. As métricas de contexto do item 13 foram calculadas. O fluxo de avaliação humana e análise de falhas dos itens 13–14 está implementado, com fichas, consolidação, diagnóstico e exportação final condicionada ao preenchimento humano. As notas reais e a confirmação dos três casos permanecem pendentes (Etapas 13–14).
+**Execução atual — 2026-10-30:** Os artefatos experimentais anteriores foram excluídos sem backup por solicitação do usuário. Os registros abaixo datados anteriormente são históricos; referências a arquivos antigos não indicam que esses arquivos continuam disponíveis. Os resultados atuais e o escopo da limpeza estão na seção final “Limpeza e reexecução completa — 2026-10-30”. O antigo notebook Colab e seu gerador foram removidos nessa limpeza. Posteriormente foi criado `Trabalho2_Colab.ipynb`, com o fluxo completo, conforme registro ao final.
 
-**Correção de resultados em 2026-10-26:** A complementação de uma lista já completa continuava acrescentando documentos, levando a fusão RRF além dos Top-100 previstos no item 8. O limite foi corrigido e o ajuste em dev, a avaliação em test, o reranking e a análise por consulta foram refeitos. Os resultados atuais nas Etapas 7, 9, 10 e 12 substituem os valores híbridos/reranqueados anteriores. Os artefatos antigos estão preservados em `Experiments/execution_2026-10-26/previous_results_before_rrf_fix/` como histórico, sem validade para a comparação final.
+Estão implementados pré-processamento, índice invertido, BM25, tolerância a erros com ajuste em dev, recuperação semântica, comparação lexical × semântica, RRF ajustado em dev, reranking Top-50, análise por consulta e geração com/sem RAG nas dez perguntas oficiais (itens 1–12). O fluxo foi reexecutado integralmente na GPU local em 2026-10-30, após a limpeza, e as vinte respostas novas passaram pela verificação de pareamento e integridade das fontes. As métricas de contexto do item 13 foram calculadas. O fluxo de avaliação humana e análise de falhas dos itens 13–14 está implementado, com fichas, consolidação, diagnóstico e exportação final condicionada ao preenchimento humano. As notas reais e a confirmação dos três casos permanecem pendentes (Etapas 13–14).
+
+**Correção de resultados em 2026-10-26:** A complementação de uma lista já completa continuava acrescentando documentos, levando a fusão RRF além dos Top-100 previstos no item 8. O limite foi corrigido e o ajuste em dev, a avaliação em test, o reranking e a análise por consulta foram refeitos. Os resultados atuais nas Etapas 7, 9, 10 e 12 substituem os valores híbridos/reranqueados anteriores. Esses artefatos antigos foram excluídos na limpeza de 2026-10-30; este registro da correção é histórico.
 
 ## Etapas de implementação
 
@@ -412,3 +414,66 @@ O grupo confirma ou altera os casos em `case_reviews.json`, com motivo da seleç
 Os três casos são interpretações preliminares com apoio de IA. Não substituem a avaliação humana exigida no item 13 nem confirmam as categorias finais do item 14. O estado real permanece `pending_human_ratings`; não foi publicado um relatório humano final com anotações incompletas.
 
 **Pendências:** Preencher as notas humanas, confirmar os três casos e revisar as evidências em `case_reviews.json`. Executar `aggregate` e `analyze` para produzir a avaliação e análise finais e incorporá-las ao relatório da disciplina. Não é necessário gerar novas respostas ou retunar o sistema para concluir essa etapa.
+
+
+## Limpeza e reexecução completa — 2026-10-30
+
+**Estado:** Concluído. As 22 células de código do `Trabalho2.ipynb`, incluindo a instalação de dependências, foram executadas em um novo kernel; `status.json` registra `complete` e sucesso em todas as células.
+
+**Objetivo:** Remover dados derivados, resultados e caches anteriores e executar novamente todo o notebook local, dispensando o notebook Colab.
+
+**Implementação:** `scripts/run_notebook.py --clean --require-cuda --run-id 2026-10-30` removeu `Experiments/`, caches Python/Jupyter gerados no projeto e todas as saídas/contadores/estados de widgets anteriores do notebook. Não foram criados backups de resultados antigos. Foram preservados o NF-Corpus original, o código, as skills, as instruções e o ambiente `.venv`, necessários à execução. O kernel antigo deste projeto foi encerrado para liberar a GPU. `RAG_Colab.ipynb` e `scripts/build_colab_rag.py` foram removidos; o README e o notebook principal passaram a orientar execução local.
+
+O novo executor usa o Python do ambiente virtual, salva progresso e cópia executada a cada célula e registra ambiente, hashes e erros. Todos os caches novos de Hugging Face, NLTK, Matplotlib, IPython e Jupyter foram direcionados a `Experiments/cache/`. As stopwords e os três modelos foram baixados novamente nesse cache. Os caches globais externos ao projeto não foram apagados; esta rodada não reutilizou os caches globais dos modelos. A limpeza não segue links para remover arquivos externos. Os três testes novos de limpeza cobrem preservação de entradas/código, remoção de saídas e tratamento de links de cache.
+
+**Decisões e justificativas:** O NF-Corpus é entrada do experimento, e `.venv` contém suas dependências; ambos foram mantidos para executar o código. A limpeza incidiu sobre os artefatos derivados e não alterou parâmetros, prompts, modelo lexical ou rankings manualmente. O ajuste continua restrito a dev. Nenhum embedding documental ou checkpoint de resposta anterior foi reutilizado. Os campos de avaliação humana foram recriados vazios; as respostas novas precisam ser avaliadas nos formulários da nova rodada. Os registros metodológicos históricos deste documento foram preservados e explicitamente diferenciados dos artefatos atuais.
+
+**Verificação e resultados:** 26 testes passaram. A conferência independente dos rankings e métricas confirmou 323 consultas por método, 32.300 linhas por ranking, fusão somente dos Top-100, preservação da cauda após reranking e correspondência das médias com as métricas por consulta. Foram preservados 3.633 documentos, 3.237 consultas e 134.294 registros de qrels nas três partições. O índice voltou a conter 19.054 termos e 360.200 postings.
+
+Tempo de construção do índice: 3,8433 s. Os embeddings dos 3.633 documentos foram recalculados em CUDA em 9,0836 s, com dimensão 384 e limite de 256 tokens; 2.864 documentos excederam esse limite. Este tempo cobre a codificação, sem incluir download/carga do modelo. O ajuste RRF em 324 consultas de dev manteve k=10. Em test:
+
+| Método | P@10 | R@10 | MAP@10 | NDCG@10 | Tempo médio (s/consulta) |
+|---|---:|---:|---:|---:|---:|
+| BM25 | 0,2390 | 0,1532 | 0,1218 | 0,3278 | 0,0006 |
+| Semântico | 0,2433 | 0,1550 | 0,1108 | 0,3167 | 0,0111 |
+| RRF (k=10) | 0,2567 | 0,1698 | 0,1326 | 0,3505 | 0,0159 |
+| RRF + reranking | 0,2511 | 0,1666 | 0,1388 | 0,3564 | 0,2512 |
+
+A Qwen2.5-1.5B-Instruct executou na RTX 4050 Laptop GPU (6 GB), com BF16, inglês, seed 42, temperatura zero/greedy e limite de 512 novos tokens. As vinte respostas foram geradas novamente. O verificador confirmou dez pares A/B com mesmos parâmetros e modelos, ausência de contexto externo em A e cinco documentos integrais em B coincidentes com o corpus. Nenhuma resposta atingiu o limite de saída. Geração média: A 8,7156 s e B 8,9555 s; os comprimentos médios de saída diferem, portanto os tempos são descritivos.
+
+Métricas do contexto nas dez perguntas: P@5 0,4600, R@5 0,107495 e Hit@5 0,9000. Dossiers e diagnósticos por etapa foram regenerados. O estado de avaliação humana permanece `pending_human_ratings`, com zero notas preenchidas e nenhum relatório humano final publicado. Relatórios interpretativos manuais antigos não foram copiados para a nova rodada.
+
+Ambiente: Python 3.14.4, PyTorch 2.14.1+cu130, Transformers 5.20.1, sentence-transformers 6.1.0 e Accelerate 1.15.0. As revisões baixadas estão registradas em `environment.json`: all-MiniLM-L6-v2 `1110a243fdf4706b3f48f1d95db1a4f5529b4d41`, cross-encoder `233902d25c440f23af6f7d6e94d2946bac0bee0a` e Qwen `989aa7980e4cf806f80c7fef2b1adb7bc71aa306`.
+
+**Artefatos atuais:** `Experiments/execution_2026-10-30/` contém notebook executado, log, ambiente, registro de limpeza e verificação da recuperação. Rankings, métricas e resultados de tolerância a erros estão na raiz de `Experiments/`; embeddings em `semantic/`; respostas e verificação RAG em `rag_experiment/`; fichas e diagnóstico em `rag_experiment/evaluation/`. `Experiments/` permanece ignorada pelo Git. As referências obsoletas ao notebook remoto e a um relatório manual apagado foram retiradas das células Markdown após a execução, sem modificar células executáveis.
+
+**Pendências:** Preencher as fichas humanas da nova rodada e confirmar os três casos do item 14; consolidar as notas e produzir a análise final. Não há inferência ou execução remota pendente nesta sessão.
+
+
+## Notebook completo para Google Colab — 2026-10-30
+
+**Estado:** Implementado e validado estruturalmente; execução remota pendente.
+
+**Objetivo:** Reunir os módulos Python e o fluxo atual em um novo notebook executável no site do Colab com GPU.
+
+**Implementação:** `scripts/build_colab_notebook.py` gera `Trabalho2_Colab.ipynb` sem saídas. Células visíveis `%%writefile` incorporam os módulos, scripts auxiliares e testes, mantendo os imports do pacote. O próprio gerador fica no repositório. As 22 células de código originais permanecem em ordem, incluindo instalação, ajuste em dev, avaliação em test e itens 11–14. O notebook configura GPU obrigatória, Drive opcional, upload/caminho de ZIP, conferência dos cinco arquivos do dataset por SHA-256, registro de fontes/ambiente e exportação de resultados em ZIP. A leitura do ZIP copia somente arquivos conhecidos para destinos fixos. Nenhuma execução local ou resultado existente foi apagado.
+
+**Decisões e justificativas:** Fontes explícitas permitem inspecionar a implementação e executar sem clone. O gerador evita manutenção manual de uma cópia divergente. Preservar o fluxo mantém os requisitos de dev/test, Top-100 RRF, reranking Top-50 e contexto integral dos itens 5–14. Resultados e embeddings persistem no Drive por RUN_NAME; caches volumosos de modelos ficam na VM. A implementação existente seleciona FP16 na T4 e BF16 quando suportado; hardware, versões e hashes são registrados para interpretar diferenças. Uma rodada nova exige novo nome e suas próprias avaliações humanas. As fichas corretas são `Experiments/rag_experiment/evaluation/ratings_reviewer_1.csv` e `ratings_reviewer_2.csv`, um arquivo por avaliador, contendo todas as respostas. A segunda ficha é opcional.
+
+**Verificação e resultados:** Validação nbformat, compilação das células após transformação IPython e compilação das fontes incorporadas passaram. Conferiu-se igualdade integral das fontes com os arquivos locais e preservação em ordem das 22 células de código do notebook original. Não foi executada inferência no Colab, não foram medidos tempos remotos e não foram geradas respostas ou notas humanas nesta alteração.
+
+**Pendências:** Abrir o novo notebook no Colab, selecionar GPU, fornecer o ZIP original e executar. Preencher as fichas da rodada escolhida e concluir a análise humana. Ao alterar fontes, regenerar o notebook antes de uma nova execução remota.
+
+## Revisão de requisitos e qualidade do código — 2026-10-30
+
+**Estado:** Revisão técnica concluída, com correções e auditoria dos resultados existentes. O quadro atualizado por item está em `Revisao_Requisitos.md`. Cumprimento integral da entrega ainda depende de discussão textual, avaliação humana e relatório.
+
+**Objetivo:** Conferir os quinze requisitos, reprodutibilidade, integridade dos artefatos e legibilidade, adiando a avaliação humana RAG por solicitação do grupo.
+
+**Implementação:** Revisão dos módulos, notebook, especificação Markdown e artefatos. Fixada a revisão MiniLM já observada na execução local; cache agora valida revisão e versão da biblioteca, e a opção sem normalização é rejeitada para a busca por cosseno. RRF mantém profundidade de candidatos mesmo com saída maior; o wrapper de reranking considera os 50 candidatos antes de cortar Top-5. BM25 usa ordem estável de termos. Validação de métricas rejeita cutoff inválido e duplicatas; complementação lexical foi centralizada. Tempos de consulta usam uma amostra única. Assinatura RAG exclui medições de duração, mantendo dados, configuração e manifesto. Imports explícitos substituem imports dinâmicos do notebook; instruções compostas foram separadas em módulos alterados. ZIPs do dataset passam a ser ignorados pelo Git. Adicionado `scripts/audit_results.py` e regenerado `Trabalho2_Colab.ipynb`.
+
+**Decisões e justificativas:** Correções de contratos e reprodutibilidade não resultam de ajuste em test. A revisão fixada é a mesma registrada anteriormente; não foi escolhido outro modelo. Tempos observados não definem identidade de prompts/contextos. A revisão preserva respostas, fichas e métricas existentes. Reuso de cache sem metadado de revisão não é presumido: na próxima execução o cache antigo será recalculado. A nova assinatura pode invalidar checkpoints antigos; uma nova rodada deve usar outro diretório/nome para preservar a atual.
+
+**Verificação e resultados:** 33 testes passaram, incluindo regressões sem modelos reais para métricas, índice/BM25, candidatos RRF, Top-50 antes de Top-5, cache por revisão e retomada RAG após remedição de tempos. Auditoria independente confirmou 323 consultas por método, 32.300 linhas em cada ranking, métricas e médias, RRF com k=10 selecionado em dev e cauda preservada no reranking. Verificação RAG confirmou 20 respostas/10 pares, fontes integrais e parâmetros comuns. Métricas de contexto e diagnóstico foram conferidos, assim como dez tokens corrompidos OOV e sorteio oficial. Resultado da auditoria: `Experiments/review/retrieval_audit.json`. Não foi reexecutada a inferência completa, nem feita execução remota no Colab.
+
+**Pendências:** Os itens 7 e 10 têm seleção/tabelas, mas seus arquivos Markdown interpretativos foram apagados na limpeza; consolidar a discussão textual usando os dados atuais. As observações históricas nas notas não substituem essa revisão da rodada escolhida. Avaliação humana RAG (item 13) e três casos finais (item 14) ficam para depois. O relatório externo não foi inspecionado: verificar PDF de até 20 páginas, seções exigidas e declaração de uso de IA. Na entrega Moodle, incluir CSVs apesar do gitignore e excluir corpus/modelos/embeddings/caches. A validação com ir_measures é recomendada e continua não executada; nesta revisão foram usados fórmulas independentes e testes numéricos.

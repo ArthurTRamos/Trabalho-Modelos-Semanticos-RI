@@ -25,7 +25,7 @@ class BM25Retriever:
             return []
 
         scores = defaultdict(float)
-        for term in set(preprocess(query)):
+        for term in sorted(set(preprocess(query))):
             postings = self.inverted_index.get(term)
             if not postings:
                 continue

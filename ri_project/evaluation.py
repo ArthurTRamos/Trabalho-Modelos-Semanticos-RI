@@ -27,10 +27,15 @@ def evaluation_judgments(qrels_frame):
 
 
 def retrieval_metrics(ranked_doc_ids, relevance_grades, k=10):
+    """P/R/AP e NDCG com ganho linear e denominadores dos qrels completos."""
+    if k <= 0:
+        raise ValueError('k deve ser positivo.')
+    if len(set(ranked_doc_ids[:k])) != len(ranked_doc_ids[:k]):
+        raise ValueError('O ranking não pode repetir documentos na janela avaliada.')
     relevant_ids = {doc_id for doc_id, grade in relevance_grades.items() if grade > 0}
     retrieved = ranked_doc_ids[:k]
     relevant_hits = [doc_id in relevant_ids for doc_id in retrieved]
-    precision = sum(relevant_hits) / k if k else 0.0
+    precision = sum(relevant_hits) / k
     recall = sum(relevant_hits) / len(relevant_ids) if relevant_ids else 0.0
     precision_sum = seen = 0.0
     for rank, doc_id in enumerate(retrieved, start=1):
@@ -124,19 +129,15 @@ def run_evaluation(documents, queries, qrels, bm25, semantic, hybrid=None, reran
         for method, retriever in retrievers.items():
             start = perf_counter()
             ranked = retriever.search(query_text, top_k=ranking_depth)
-            if method == 'lexical_bm25' and len(ranked) < ranking_depth:
-                present = {item['doc_id'] for item in ranked}
-                for doc_id in ordered_doc_ids:
-                    if doc_id not in present:
-                        ranked.append({'doc_id': doc_id, 'score': 0.0})
-                        if len(ranked) == ranking_depth:
-                            break
-            query_time_totals[method] += perf_counter() - start
+            if method == 'lexical_bm25':
+                ranked = complete_ranking(ranked, ordered_doc_ids, ranking_depth)
+            elapsed = perf_counter() - start
+            query_time_totals[method] += elapsed
             if method == RERANK_METHOD:
                 retrieval_time_totals[method] += reranked.last_hybrid_retrieval_seconds
                 rerank_time_totals[method] += reranked.reranker.last_reranking_seconds
             else:
-                retrieval_time_totals[method] += perf_counter() - start
+                retrieval_time_totals[method] += elapsed
             rankings[qid][method] = ranked
             metrics = retrieval_metrics([item['doc_id'] for item in ranked], grades, cutoff)
             metric_records.append({'query_id': qid, 'model': method, **metrics})
@@ -195,6 +196,9 @@ def run_evaluation(documents, queries, qrels, bm25, semantic, hybrid=None, reran
 
 
 def build_comparison_cases(documents, queries, result, output_dir=EXPERIMENTS_DIR):
+    """Exporta seis casos pareados e evidências lexicais para interpretação."""
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
     per_query = result['metrics_per_query']
     judgments, rankings = result['judgments'], result['rankings_by_query']
     # Os casos explicativos seguem comparando os dois baselines pareados;
