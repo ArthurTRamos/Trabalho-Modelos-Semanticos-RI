@@ -1,0 +1,132 @@
+{
+  "status": "suggestions_ready",
+  "criterion": "mean(B-A) of fidelidade, completude and utilidade; equal weights",
+  "neutral_absolute_delta_limit": 0.3333333333333333,
+  "manual_confirmation_required": true,
+  "neutral_total_absolute_change_limit": 1,
+  "missing_categories": [],
+  "cases": [
+    {
+      "category": "melhora",
+      "query_id": "PLAIN-2750",
+      "mean_delta_common": 1.3333333333333333,
+      "mean_A_common": 0.6666666666666666,
+      "mean_B_common": 2,
+      "delta_fidelidade": 2,
+      "delta_completude": 1,
+      "delta_utilidade": 1
+    },
+    {
+      "category": "nao_ajudou",
+      "query_id": "PLAIN-2850",
+      "mean_delta_common": 0,
+      "mean_A_common": 0,
+      "mean_B_common": 0,
+      "delta_fidelidade": 0,
+      "delta_completude": 0,
+      "delta_utilidade": 0
+    },
+    {
+      "category": "pouca_diferenca",
+      "query_id": "PLAIN-238",
+      "mean_delta_common": 0.3333333333333333,
+      "mean_A_common": 1,
+      "mean_B_common": 1.3333333333333333,
+      "delta_fidelidade": 1,
+      "delta_completude": 0,
+      "delta_utilidade": 0
+    }
+  ],
+  "comparisons": [
+    {
+      "query_id": "PLAIN-68",
+      "mean_delta_common": 1.3333333333333333,
+      "mean_A_common": 0.6666666666666666,
+      "mean_B_common": 2,
+      "delta_fidelidade": 2,
+      "delta_completude": 1,
+      "delta_utilidade": 1
+    },
+    {
+      "query_id": "PLAIN-2450",
+      "mean_delta_common": 0.3333333333333333,
+      "mean_A_common": 1,
+      "mean_B_common": 1.3333333333333333,
+      "delta_fidelidade": 0,
+      "delta_completude": 1,
+      "delta_utilidade": 0
+    },
+    {
+      "query_id": "PLAIN-153",
+      "mean_delta_common": 1,
+      "mean_A_common": 1,
+      "mean_B_common": 2,
+      "delta_fidelidade": 1,
+      "delta_completude": 1,
+      "delta_utilidade": 1
+    },
+    {
+      "query_id": "PLAIN-2850",
+      "mean_delta_common": 0,
+      "mean_A_common": 0,
+      "mean_B_common": 0,
+      "delta_fidelidade": 0,
+      "delta_completude": 0,
+      "delta_utilidade": 0
+    },
+    {
+      "query_id": "PLAIN-2750",
+      "mean_delta_common": 1.3333333333333333,
+      "mean_A_common": 0.6666666666666666,
+      "mean_B_common": 2,
+      "delta_fidelidade": 2,
+      "delta_completude": 1,
+      "delta_utilidade": 1
+    },
+    {
+      "query_id": "PLAIN-270",
+      "mean_delta_common": 0.6666666666666666,
+      "mean_A_common": 1.3333333333333333,
+      "mean_B_common": 2,
+      "delta_fidelidade": 1,
+      "delta_completude": 1,
+      "delta_utilidade": 0
+    },
+    {
+      "query_id": "PLAIN-2470",
+      "mean_delta_common": 1,
+      "mean_A_common": 1,
+      "mean_B_common": 2,
+      "delta_fidelidade": 1,
+      "delta_completude": 1,
+      "delta_utilidade": 1
+    },
+    {
+      "query_id": "PLAIN-2430",
+      "mean_delta_common": 0.3333333333333333,
+      "mean_A_common": 1,
+      "mean_B_common": 1.3333333333333333,
+      "delta_fidelidade": 0,
+      "delta_completude": 1,
+      "delta_utilidade": 0
+    },
+    {
+      "query_id": "PLAIN-238",
+      "mean_delta_common": 0.3333333333333333,
+      "mean_A_common": 1,
+      "mean_B_common": 1.3333333333333333,
+      "delta_fidelidade": 1,
+      "delta_completude": 0,
+      "delta_utilidade": 0
+    },
+    {
+      "query_id": "PLAIN-3342",
+      "mean_delta_common": 0.6666666666666666,
+      "mean_A_common": 0.3333333333333333,
+      "mean_B_common": 1,
+      "delta_fidelidade": 1,
+      "delta_completude": 0,
+      "delta_utilidade": 1
+    }
+  ]
+}

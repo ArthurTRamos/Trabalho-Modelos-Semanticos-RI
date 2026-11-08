@@ -1,0 +1,48 @@
+{
+  "created_at_utc": "2026-11-08T13:00:39.858639+00:00",
+  "gpu": "Tesla T4",
+  "python": "3.13.16 (main, Oct  1 2026, 15:40:24) [GCC 13.3.0]",
+  "versions": {
+    "torch": "2.14.1+cu130",
+    "transformers": "5.20.1",
+    "sentence-transformers": "6.1.0",
+    "accelerate": "1.15.0",
+    "numpy": "2.4.6",
+    "pandas": "2.2.3"
+  },
+  "dataset_sha256": {
+    "corpus.jsonl": "10cc83ef1826b1425e6a87090b5140b39b27755d5a27e48215a88611c899991f",
+    "queries.jsonl": "d024e6621b84925d485ae473d316a0c3af31c62c8068a59fb29d22f7613aef2a",
+    "qrels/train.tsv": "6336b80f9bffc4f063f3aa450047ad35c0b7c534efe4a6ba35e16dbace047f6a",
+    "qrels/dev.tsv": "b1d38b5e8f78c4a5820bce2b7ec2db54911d7690dc601e76811846b211180bd8",
+    "qrels/test.tsv": "f8fba6ef3d4dd9c3a242a8ba4ae38276fc3622fce7dcbae764766d564542fd2a"
+  },
+  "source_sha256": {
+    "ri_project/__init__.py": "4d6c5bbd1a0c74a7b0b60fe0235f9ca8331fc3ae673565e81b943495d23fc86f",
+    "ri_project/bm25.py": "1b54e7a131c0f60d37544c54af7d89f7dfde18024d8da063086e13822e1a740c",
+    "ri_project/config.py": "c2179fa103776cbe67b306163061de06276ae3b14b53260e4a6a9df07a0045b7",
+    "ri_project/data.py": "e5cd6c69c84a78f75ab61dda38f187dac0fea135e9ae98ba249b270d1e7d07b4",
+    "ri_project/evaluation.py": "212808c9d2a5c1c41abc1e6a7fa5986ea182acfb6d71ef2748074b78152ac5a4",
+    "ri_project/hybrid.py": "a589063c657aec3a9bc19ca33207d18661c4319fbc79665e0807fef84e09c69c",
+    "ri_project/indexing.py": "b6c39a2be116f4146ba0130ba904cc9f94d18376e4ecfe678db3194916a62dd5",
+    "ri_project/preprocessing.py": "980a883c5635b1cd64e8a8eb4e33a996580e3cd83b8b6826c807de3c126d405e",
+    "ri_project/rag.py": "06beffa8ca5fcffc5f63cbb8ac41cb38eb2893e0b0b3af99252de4a8c9fde50d",
+    "ri_project/rag_analysis.py": "e62ecf2158971343c4e5295b3bdbd42f6ad5681353b5e96242efe097745763f7",
+    "ri_project/rag_evaluation.py": "f1202c9e20d9f4ba5e9a8f5d6a56e003d1dad5bfb14fc98cb1d4b7d6de0dc113",
+    "ri_project/rag_experiment.py": "0d35abb4c35bfb5e4025bfdb2c4d89df531722f40d6043d8448d6afbf00b7794",
+    "ri_project/reranking.py": "de6aae8c65a27793b4714ef6c88407c7fab724cd478b3f141abf61c01c85a09d",
+    "ri_project/semantic.py": "9849502a467551f81f976b440dc9a972ada1bbee7ed537a98394de3c797acccf",
+    "ri_project/typo.py": "0b5a0e7d2b4c616897307f057e343873e0d1943c0be4a48dc31c334afe130dc6",
+    "scripts/audit_results.py": "efa35515cc26b35bb95b4312bf8515879802ce7373751ec38d1d772ae09926c9",
+    "scripts/consolidate_ai_review.py": "534a2626d88521ccd0d4bc02b071f723abb1dcf2d9896e8318a2b5bc6d6deeb1",
+    "scripts/run_notebook.py": "18e7e993d881ddd457f8fb290372ecbb509edb3557eed8cb888cdc1f9e1c75e5",
+    "scripts/verify_rag_experiment.py": "fff4da135d3c98f6a9acfb0ea687bc9dce553e58f3864e480ba86cd833471b34",
+    "tests/test_hybrid.py": "01755fd99b1da928eba508998741fac0a0cf6fef18bf8e7b06a0d873014e6db3",
+    "tests/test_rag.py": "154a60ee1c102a65f8c3e89aebd185040b200523b236c28143d14f034bc14d6d",
+    "tests/test_rag_evaluation.py": "ba399af27f6de6ccc4162fe92caeabca920405b9c6774e0c497fb600d47d6373",
+    "tests/test_rag_experiment.py": "fbd9fb8a86600ea9063d45a908cbe4b7907dec9d1c6a2cb65689f0ca23429647",
+    "tests/test_retrieval_contracts.py": "8cf0dd18e7fd4870ab856ba47cbc9cfb4f4ae531aea50a499038e6183f73c2a4",
+    "tests/test_run_notebook.py": "0d2ec49284f0e6c8096129a98f0b3b1824857deb95b7ebee7c5752f59218985a"
+  },
+  "run_name": "trabalho2_colab_01"
+}

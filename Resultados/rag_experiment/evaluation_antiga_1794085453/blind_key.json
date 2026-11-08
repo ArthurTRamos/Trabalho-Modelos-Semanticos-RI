@@ -1,0 +1,106 @@
+{
+  "artifact_fingerprint": "67a11064f9c221dbcc212354fd968e6632c7203184bafdabd751c8b2ff69dadb",
+  "shuffle_seed": 42,
+  "items": [
+    {
+      "answer_id": "R01",
+      "query_id": "PLAIN-3342",
+      "condition": "B"
+    },
+    {
+      "answer_id": "R02",
+      "query_id": "PLAIN-153",
+      "condition": "B"
+    },
+    {
+      "answer_id": "R03",
+      "query_id": "PLAIN-2430",
+      "condition": "A"
+    },
+    {
+      "answer_id": "R04",
+      "query_id": "PLAIN-153",
+      "condition": "A"
+    },
+    {
+      "answer_id": "R05",
+      "query_id": "PLAIN-2750",
+      "condition": "B"
+    },
+    {
+      "answer_id": "R06",
+      "query_id": "PLAIN-2470",
+      "condition": "B"
+    },
+    {
+      "answer_id": "R07",
+      "query_id": "PLAIN-2430",
+      "condition": "B"
+    },
+    {
+      "answer_id": "R08",
+      "query_id": "PLAIN-3342",
+      "condition": "A"
+    },
+    {
+      "answer_id": "R09",
+      "query_id": "PLAIN-2850",
+      "condition": "A"
+    },
+    {
+      "answer_id": "R10",
+      "query_id": "PLAIN-2470",
+      "condition": "A"
+    },
+    {
+      "answer_id": "R11",
+      "query_id": "PLAIN-238",
+      "condition": "B"
+    },
+    {
+      "answer_id": "R12",
+      "query_id": "PLAIN-270",
+      "condition": "A"
+    },
+    {
+      "answer_id": "R13",
+      "query_id": "PLAIN-68",
+      "condition": "B"
+    },
+    {
+      "answer_id": "R14",
+      "query_id": "PLAIN-270",
+      "condition": "B"
+    },
+    {
+      "answer_id": "R15",
+      "query_id": "PLAIN-2450",
+      "condition": "A"
+    },
+    {
+      "answer_id": "R16",
+      "query_id": "PLAIN-238",
+      "condition": "A"
+    },
+    {
+      "answer_id": "R17",
+      "query_id": "PLAIN-2850",
+      "condition": "B"
+    },
+    {
+      "answer_id": "R18",
+      "query_id": "PLAIN-2750",
+      "condition": "A"
+    },
+    {
+      "answer_id": "R19",
+      "query_id": "PLAIN-68",
+      "condition": "A"
+    },
+    {
+      "answer_id": "R20",
+      "query_id": "PLAIN-2450",
+      "condition": "B"
+    }
+  ]
+}
