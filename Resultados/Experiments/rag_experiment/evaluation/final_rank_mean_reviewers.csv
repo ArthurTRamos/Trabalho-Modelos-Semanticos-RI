@@ -1,0 +1,11 @@
+rank,query_id,query,A_media,B_media,delta_fidelidade,delta_completude,delta_utilidade,rastreabilidade_B,delta_B_menos_A
+1,PLAIN-68,What is Actually in Chicken Nuggets?,0.5,2.0,2.0,1.5,1.0,1.0,1.5
+2,PLAIN-2750,Preventing the Common Cold with Probiotics?,0.5,1.8333333333333333,2.0,1.0,1.0,1.5,1.3333333333333333
+3,PLAIN-2470,Is Milk Good for Our Bones?,0.8333333333333334,1.8333333333333333,1.0,1.0,1.0,2.0,0.9999999999999999
+4,PLAIN-153,How Should I Take Probiotics?,1.0,1.8333333333333333,0.5,1.0,1.0,1.0,0.8333333333333333
+5,PLAIN-270,Is Caffeinated Tea Really Dehydrating?,1.1666666666666667,1.6666666666666667,1.0,0.5,0.0,2.0,0.5
+6,PLAIN-2430,Preventing Brain Loss with B Vitamins?,0.8333333333333334,1.3333333333333333,0.5,0.5,0.5,2.0,0.4999999999999999
+7,PLAIN-3342,Is Coconut Milk Good For You?,0.5,0.8333333333333334,0.5,0.0,0.5,1.5,0.33333333333333337
+8,PLAIN-238,How Chemically Contaminated Are We?,1.0,1.3333333333333333,1.0,0.0,0.0,0.5,0.33333333333333326
+9,PLAIN-2450,Are Organic Foods Safer?,1.0,1.1666666666666667,0.0,0.5,0.0,0.5,0.16666666666666674
+10,PLAIN-2850,More Antibiotics In White Meat or Dark Meat?,0.0,0.0,0.0,0.0,0.0,1.0,0.0

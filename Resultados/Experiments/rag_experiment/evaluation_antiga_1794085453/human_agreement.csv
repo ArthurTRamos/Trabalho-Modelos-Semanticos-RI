@@ -1,0 +1,8 @@
+evaluator_a,evaluator_b,condition,criterion,n_pairs,exact_agreement,quadratic_kappa
+avaliador_1,avaliador_2,A,fidelidade,0,,
+avaliador_1,avaliador_2,A,completude,0,,
+avaliador_1,avaliador_2,A,utilidade,0,,
+avaliador_1,avaliador_2,B,fidelidade,0,,
+avaliador_1,avaliador_2,B,completude,0,,
+avaliador_1,avaliador_2,B,utilidade,0,,
+avaliador_1,avaliador_2,B,rastreabilidade,0,,

@@ -1,0 +1,41 @@
+answer_id,query_id,condition,evaluator_id,fidelidade,justificativa_fidelidade,completude,justificativa_completude,utilidade,justificativa_utilidade,rastreabilidade,justificativa_rastreabilidade
+R01,PLAIN-3342,B,avaliador_1,,,,,,,,
+R02,PLAIN-153,B,avaliador_1,,,,,,,,
+R03,PLAIN-2430,A,avaliador_1,,,,,,,N/A,N/A: nenhum contexto externo fornecido à LLM.
+R04,PLAIN-153,A,avaliador_1,,,,,,,N/A,N/A: nenhum contexto externo fornecido à LLM.
+R05,PLAIN-2750,B,avaliador_1,,,,,,,,
+R06,PLAIN-2470,B,avaliador_1,,,,,,,,
+R07,PLAIN-2430,B,avaliador_1,,,,,,,,
+R08,PLAIN-3342,A,avaliador_1,,,,,,,N/A,N/A: nenhum contexto externo fornecido à LLM.
+R09,PLAIN-2850,A,avaliador_1,,,,,,,N/A,N/A: nenhum contexto externo fornecido à LLM.
+R10,PLAIN-2470,A,avaliador_1,,,,,,,N/A,N/A: nenhum contexto externo fornecido à LLM.
+R11,PLAIN-238,B,avaliador_1,,,,,,,,
+R12,PLAIN-270,A,avaliador_1,,,,,,,N/A,N/A: nenhum contexto externo fornecido à LLM.
+R13,PLAIN-68,B,avaliador_1,,,,,,,,
+R14,PLAIN-270,B,avaliador_1,,,,,,,,
+R15,PLAIN-2450,A,avaliador_1,,,,,,,N/A,N/A: nenhum contexto externo fornecido à LLM.
+R16,PLAIN-238,A,avaliador_1,,,,,,,N/A,N/A: nenhum contexto externo fornecido à LLM.
+R17,PLAIN-2850,B,avaliador_1,,,,,,,,
+R18,PLAIN-2750,A,avaliador_1,,,,,,,N/A,N/A: nenhum contexto externo fornecido à LLM.
+R19,PLAIN-68,A,avaliador_1,,,,,,,N/A,N/A: nenhum contexto externo fornecido à LLM.
+R20,PLAIN-2450,B,avaliador_1,,,,,,,,
+R01,PLAIN-3342,B,avaliador_2,,,,,,,,
+R02,PLAIN-153,B,avaliador_2,,,,,,,,
+R03,PLAIN-2430,A,avaliador_2,,,,,,,N/A,N/A: nenhum contexto externo fornecido à LLM.
+R04,PLAIN-153,A,avaliador_2,,,,,,,N/A,N/A: nenhum contexto externo fornecido à LLM.
+R05,PLAIN-2750,B,avaliador_2,,,,,,,,
+R06,PLAIN-2470,B,avaliador_2,,,,,,,,
+R07,PLAIN-2430,B,avaliador_2,,,,,,,,
+R08,PLAIN-3342,A,avaliador_2,,,,,,,N/A,N/A: nenhum contexto externo fornecido à LLM.
+R09,PLAIN-2850,A,avaliador_2,,,,,,,N/A,N/A: nenhum contexto externo fornecido à LLM.
+R10,PLAIN-2470,A,avaliador_2,,,,,,,N/A,N/A: nenhum contexto externo fornecido à LLM.
+R11,PLAIN-238,B,avaliador_2,,,,,,,,
+R12,PLAIN-270,A,avaliador_2,,,,,,,N/A,N/A: nenhum contexto externo fornecido à LLM.
+R13,PLAIN-68,B,avaliador_2,,,,,,,,
+R14,PLAIN-270,B,avaliador_2,,,,,,,,
+R15,PLAIN-2450,A,avaliador_2,,,,,,,N/A,N/A: nenhum contexto externo fornecido à LLM.
+R16,PLAIN-238,A,avaliador_2,,,,,,,N/A,N/A: nenhum contexto externo fornecido à LLM.
+R17,PLAIN-2850,B,avaliador_2,,,,,,,,
+R18,PLAIN-2750,A,avaliador_2,,,,,,,N/A,N/A: nenhum contexto externo fornecido à LLM.
+R19,PLAIN-68,A,avaliador_2,,,,,,,N/A,N/A: nenhum contexto externo fornecido à LLM.
+R20,PLAIN-2450,B,avaliador_2,,,,,,,,

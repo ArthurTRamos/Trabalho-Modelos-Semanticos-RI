@@ -1,0 +1,11 @@
+query_id,query,context_doc_ids,relevant_in_context,total_relevant,P5,R5,Hit5
+PLAIN-68,What is Actually in Chicken Nuggets?,"[""MED-2991"", ""MED-1797"", ""MED-2492"", ""MED-2088"", ""MED-1810""]",1,55,0.2,0.01818181818181818,1
+PLAIN-2450,Are Organic Foods Safer?,"[""MED-1140"", ""MED-1178"", ""MED-1144"", ""MED-1179"", ""MED-1173""]",2,38,0.4,0.05263157894736842,1
+PLAIN-153,How Should I Take Probiotics?,"[""MED-3679"", ""MED-3692"", ""MED-3695"", ""MED-3693"", ""MED-3680""]",5,47,1.0,0.10638297872340426,1
+PLAIN-2850,More Antibiotics In White Meat or Dark Meat?,"[""MED-3891"", ""MED-4358"", ""MED-4983"", ""MED-2584"", ""MED-4482""]",0,9,0.0,0.0,0
+PLAIN-2750,Preventing the Common Cold with Probiotics?,"[""MED-3683"", ""MED-3695"", ""MED-3680"", ""MED-3690"", ""MED-4762""]",4,59,0.8,0.06779661016949153,1
+PLAIN-270,Is Caffeinated Tea Really Dehydrating?,"[""MED-4331"", ""MED-5245"", ""MED-878"", ""MED-1645"", ""MED-4439""]",2,52,0.4,0.038461538461538464,1
+PLAIN-2470,Is Milk Good for Our Bones?,"[""MED-1337"", ""MED-1340"", ""MED-1338"", ""MED-904"", ""MED-4902""]",3,73,0.6,0.0410958904109589,1
+PLAIN-2430,Preventing Brain Loss with B Vitamins?,"[""MED-994"", ""MED-980"", ""MED-5128"", ""MED-986"", ""MED-4929""]",3,46,0.6,0.06521739130434782,1
+PLAIN-238,How Chemically Contaminated Are We?,"[""MED-2391"", ""MED-4739"", ""MED-2493"", ""MED-4653"", ""MED-2994""]",1,54,0.2,0.018518518518518517,1
+PLAIN-3342,Is Coconut Milk Good For You?,"[""MED-5014"", ""MED-5015"", ""MED-4000"", ""MED-4002"", ""MED-5012""]",2,3,0.4,0.6666666666666666,1

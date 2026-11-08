@@ -1,0 +1,17 @@
+evaluator_id,condition,criterion,applicable,expected_count,rated_count,mean,complete
+avaliador_1,A,fidelidade,True,10,0,,False
+avaliador_1,A,completude,True,10,0,,False
+avaliador_1,A,utilidade,True,10,0,,False
+avaliador_1,A,rastreabilidade,False,0,0,,True
+avaliador_1,B,fidelidade,True,10,0,,False
+avaliador_1,B,completude,True,10,0,,False
+avaliador_1,B,utilidade,True,10,0,,False
+avaliador_1,B,rastreabilidade,True,10,0,,False
+avaliador_2,A,fidelidade,True,10,0,,False
+avaliador_2,A,completude,True,10,0,,False
+avaliador_2,A,utilidade,True,10,0,,False
+avaliador_2,A,rastreabilidade,False,0,0,,True
+avaliador_2,B,fidelidade,True,10,0,,False
+avaliador_2,B,completude,True,10,0,,False
+avaliador_2,B,utilidade,True,10,0,,False
+avaliador_2,B,rastreabilidade,True,10,0,,False

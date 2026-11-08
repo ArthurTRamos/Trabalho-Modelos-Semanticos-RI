@@ -1,0 +1,5 @@
+case,query_id,query,ndcg10_hybrid,ndcg10_reranking,delta_ndcg10,changed_documents_in_top10_union
+maior ganho,PLAIN-1320,Harvard Physicians’ Study II,0.0,0.5616927747727312,0.5616927747727312,17
+segundo maior ganho,PLAIN-1473,kohlrabi,0.6309297535714575,1.0,0.36907024642854247,18
+pouca ou nenhuma alteração,PLAIN-1557,magnesium,0.31516255047698366,0.31516255047698366,0.0,8
+maior piora,PLAIN-2540,Does Cholesterol Size Matter?,0.6153357029325758,0.3030778079661617,-0.3122578949664141,16

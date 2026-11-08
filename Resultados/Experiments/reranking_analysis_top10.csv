@@ -1,0 +1,81 @@
+case,query_id,query,method,rank,doc_id,relevance,score,title
+maior ganho,PLAIN-1320,Harvard Physicians’ Study II,hybrid_reranking,1,MED-2760,1.0,0.7552133202552795,Multivitamins in the Prevention of Cancer in Men: The Physicians’ Health Study II Randomized Controlled Trial
+maior ganho,PLAIN-1320,Harvard Physicians’ Study II,hybrid_reranking,2,MED-4929,0.0,0.1777525097131729,Vitamins E and C in the Prevention of Cardiovascular Disease in Men: The Physicians’ Health Study II Randomized Trial
+maior ganho,PLAIN-1320,Harvard Physicians’ Study II,hybrid_reranking,3,MED-2758,1.0,-2.012953042984009,Multivitamins in the Prevention of Cardiovascular Disease in Men: The Physicians' Health Study II Randomized Controlled Trial
+maior ganho,PLAIN-1320,Harvard Physicians’ Study II,hybrid_reranking,4,MED-1986,0.0,-4.050280570983887,Long-term morbidity and mortality of overweight adolescents. A follow-up of the Harvard Growth Study of 1922 to 1935.
+maior ganho,PLAIN-1320,Harvard Physicians’ Study II,hybrid_reranking,5,MED-4398,0.0,-4.215023517608643,High school dietary dairy intake and teenage acne.
+maior ganho,PLAIN-1320,Harvard Physicians’ Study II,hybrid_reranking,6,MED-2761,1.0,-5.364429473876953,Who uses multivitamins? A cross-sectional study in the Physicians' Health Study.
+maior ganho,PLAIN-1320,Harvard Physicians’ Study II,hybrid_reranking,7,MED-3932,0.0,-6.2349443435668945,Caffeine and risk of Parkinson disease in a large cohort of men and women
+maior ganho,PLAIN-1320,Harvard Physicians’ Study II,hybrid_reranking,8,MED-5124,0.0,-7.139717102050781,Egg Consumption and Cardiovascular Disease and Mortality The Physicians' Health Study
+maior ganho,PLAIN-1320,Harvard Physicians’ Study II,hybrid_reranking,9,MED-761,0.0,-7.343169689178467,The counseling practices of internists.
+maior ganho,PLAIN-1320,Harvard Physicians’ Study II,hybrid_reranking,10,MED-1622,0.0,-7.523326396942139,"Coffee, caffeine, and risk of completed suicide: results from 3 prospective cohorts of American adults"
+maior ganho,PLAIN-1320,Harvard Physicians’ Study II,hybrid_rrf,1,MED-2112,0.0,0.13090909090909092,How evidence-based medicine biases physicians against nutrition.
+maior ganho,PLAIN-1320,Harvard Physicians’ Study II,hybrid_rrf,2,MED-1053,0.0,0.12698412698412698,Physician disclosure of healthy personal behaviors improves credibility and ability to motivate.
+maior ganho,PLAIN-1320,Harvard Physicians’ Study II,hybrid_rrf,3,MED-1986,0.0,0.11471861471861472,Long-term morbidity and mortality of overweight adolescents. A follow-up of the Harvard Growth Study of 1922 to 1935.
+maior ganho,PLAIN-1320,Harvard Physicians’ Study II,hybrid_rrf,4,MED-1097,0.0,0.11396011396011396,Moses Maimonides: medieval physician and scholar.
+maior ganho,PLAIN-1320,Harvard Physicians’ Study II,hybrid_rrf,5,MED-761,0.0,0.10374149659863945,The counseling practices of internists.
+maior ganho,PLAIN-1320,Harvard Physicians’ Study II,hybrid_rrf,6,MED-1543,0.0,0.09821428571428571,Patient-related diet and exercise counseling: do providers' own lifestyle habits matter?
+maior ganho,PLAIN-1320,Harvard Physicians’ Study II,hybrid_rrf,7,MED-4929,0.0,0.09741784037558684,Vitamins E and C in the Prevention of Cardiovascular Disease in Men: The Physicians’ Health Study II Randomized Trial
+maior ganho,PLAIN-1320,Harvard Physicians’ Study II,hybrid_rrf,8,MED-1549,0.0,0.09307359307359307,Physicians' health habits are associated with lifestyle counseling for hypertensive patients.
+maior ganho,PLAIN-1320,Harvard Physicians’ Study II,hybrid_rrf,9,MED-728,0.0,0.09166666666666667,Barriers to providing nutrition counseling cited by physicians: a survey of primary care practitioners.
+maior ganho,PLAIN-1320,Harvard Physicians’ Study II,hybrid_rrf,10,MED-5346,0.0,0.08992248062015504,Resident duty-hour restrictions-who are we protecting?: AOA critical issues.
+maior piora,PLAIN-2540,Does Cholesterol Size Matter?,hybrid_reranking,1,MED-1205,0.0,-3.133152961730957,Effect of cholesterol crystals on plaques and intima in arteries of patients with acute coronary and cerebrovascular syndromes.
+maior piora,PLAIN-2540,Does Cholesterol Size Matter?,hybrid_reranking,2,MED-1886,2.0,-3.8482742309570312,Lipoprotein Particle Profiles by Nuclear Magnetic Resonance Compared with Standard Lipids and Apolipoproteins in Predicting Incident Cardiovascular Disease in Women
+maior piora,PLAIN-2540,Does Cholesterol Size Matter?,hybrid_reranking,3,MED-1968,0.0,-4.254489898681641,Effects of increasing amounts of dietary cholesterol on postprandial lipemia and lipoproteins in human subjects.
+maior piora,PLAIN-2540,Does Cholesterol Size Matter?,hybrid_reranking,4,MED-3398,0.0,-5.991497993469238,Total cholesterol and high density lipoprotein cholesterol as important predictors of erectile dysfunction.
+maior piora,PLAIN-2540,Does Cholesterol Size Matter?,hybrid_reranking,5,MED-1884,2.0,-6.07565975189209,Maintenance of the LDL cholesterol:HDL cholesterol ratio in an elderly population given a dietary cholesterol challenge.
+maior piora,PLAIN-2540,Does Cholesterol Size Matter?,hybrid_reranking,6,MED-4676,0.0,-6.239587783813477,Dietary cholesterol and egg yolks: Not for patients at risk of vascular disease
+maior piora,PLAIN-2540,Does Cholesterol Size Matter?,hybrid_reranking,7,MED-2440,0.0,-6.255076885223389,Total Cholesterol and Cancer Risk in a Large Prospective Study in Korea
+maior piora,PLAIN-2540,Does Cholesterol Size Matter?,hybrid_reranking,8,MED-1882,2.0,-6.433300495147705,Low-density lipoprotein and high-density lipoprotein particle subclasses predict coronary events and are favorably changed by gemfibrozil therapy i...
+maior piora,PLAIN-2540,Does Cholesterol Size Matter?,hybrid_reranking,9,MED-1428,0.0,-6.501963138580322,Optimal low-density lipoprotein is 50 to 70 mg/dl: lower is better and physiologically normal.
+maior piora,PLAIN-2540,Does Cholesterol Size Matter?,hybrid_reranking,10,MED-4509,0.0,-6.860446453094482,A meta-analysis of the effect of soy protein supplementation on serum lipids.
+maior piora,PLAIN-2540,Does Cholesterol Size Matter?,hybrid_rrf,1,MED-1890,2.0,0.11090909090909092,Dietary cholesterol from eggs increases the ratio of total cholesterol to high-density lipoprotein cholesterol in humans: a meta-analysis.
+maior piora,PLAIN-2540,Does Cholesterol Size Matter?,hybrid_rrf,2,MED-1886,2.0,0.10294117647058823,Lipoprotein Particle Profiles by Nuclear Magnetic Resonance Compared with Standard Lipids and Apolipoproteins in Predicting Incident Cardiovascular Disease in Women
+maior piora,PLAIN-2540,Does Cholesterol Size Matter?,hybrid_rrf,3,MED-1966,0.0,0.10220125786163521,Effects of dietary cholesterol on serum cholesterol: a meta-analysis and review.
+maior piora,PLAIN-2540,Does Cholesterol Size Matter?,hybrid_rrf,4,MED-1884,2.0,0.09416445623342176,Maintenance of the LDL cholesterol:HDL cholesterol ratio in an elderly population given a dietary cholesterol challenge.
+maior piora,PLAIN-2540,Does Cholesterol Size Matter?,hybrid_rrf,5,MED-3370,0.0,0.09090909090909091,Serving styles of raw snack vegetables. What do children want?
+maior piora,PLAIN-2540,Does Cholesterol Size Matter?,hybrid_rrf,6,MED-1882,2.0,0.08823529411764705,Low-density lipoprotein and high-density lipoprotein particle subclasses predict coronary events and are favorably changed by gemfibrozil therapy i...
+maior piora,PLAIN-2540,Does Cholesterol Size Matter?,hybrid_rrf,7,MED-4831,0.0,0.08626887131560029,Effects of plant-based diets on plasma lipids.
+maior piora,PLAIN-2540,Does Cholesterol Size Matter?,hybrid_rrf,8,MED-2525,0.0,0.08229166666666667,A global survey of physicians' perceptions on cholesterol management: the From The Heart study.
+maior piora,PLAIN-2540,Does Cholesterol Size Matter?,hybrid_rrf,9,MED-2020,0.0,0.08115942028985507,Effect of wheat bran on serum lipids: influence of particle size and wheat protein.
+maior piora,PLAIN-2540,Does Cholesterol Size Matter?,hybrid_rrf,10,MED-1885,2.0,0.07805429864253394,Rethinking dietary cholesterol.
+pouca ou nenhuma alteração,PLAIN-1557,magnesium,hybrid_reranking,1,MED-1406,0.0,2.1897518634796143,Dietary magnesium intake is inversely associated with mortality in adults at high cardiovascular disease risk.
+pouca ou nenhuma alteração,PLAIN-1557,magnesium,hybrid_reranking,2,MED-3918,1.0,-0.5327214598655701,"Herbal infusions as a source of calcium, magnesium, iron, zinc and copper in human nutrition."
+pouca ou nenhuma alteração,PLAIN-1557,magnesium,hybrid_reranking,3,MED-4315,1.0,-1.357124924659729,Differences in metal content of the heart muscle in death from ischemic heart disease.
+pouca ou nenhuma alteração,PLAIN-1557,magnesium,hybrid_reranking,4,MED-2248,0.0,-1.5576350688934326,Trace element status in healthy subjects switching from a mixed to a lactovegetarian diet for 12 mo.
+pouca ou nenhuma alteração,PLAIN-1557,magnesium,hybrid_reranking,5,MED-5005,0.0,-2.6908934116363525,Increased prevalence of constipation in pre-school children is attributable to under-consumption of plant foods: A community-based study.
+pouca ou nenhuma alteração,PLAIN-1557,magnesium,hybrid_reranking,6,MED-1447,0.0,-3.2960691452026367,Nutrient intake in the GEICO multicenter trial: the effects of a multicomponent worksite intervention
+pouca ou nenhuma alteração,PLAIN-1557,magnesium,hybrid_reranking,7,MED-3497,0.0,-3.800309181213379,Evaluation of certain food additives and contaminants.
+pouca ou nenhuma alteração,PLAIN-1557,magnesium,hybrid_reranking,8,MED-2249,0.0,-3.903745412826538,Zinc and multi-mineral supplementation should mitigate the pathogenic impact of cadmium exposure.
+pouca ou nenhuma alteração,PLAIN-1557,magnesium,hybrid_reranking,9,MED-4313,1.0,-4.039273262023926,A vegetarian dietary pattern as a nutrient-dense approach to weight management: an analysis of the national health and nutrition examination survey...
+pouca ou nenhuma alteração,PLAIN-1557,magnesium,hybrid_reranking,10,MED-2380,0.0,-4.195389270782471,"Nuts, hypertension and endothelial function."
+pouca ou nenhuma alteração,PLAIN-1557,magnesium,hybrid_rrf,1,MED-1406,0.0,0.18181818181818182,Dietary magnesium intake is inversely associated with mortality in adults at high cardiovascular disease risk.
+pouca ou nenhuma alteração,PLAIN-1557,magnesium,hybrid_rrf,2,MED-4315,1.0,0.15476190476190477,Differences in metal content of the heart muscle in death from ischemic heart disease.
+pouca ou nenhuma alteração,PLAIN-1557,magnesium,hybrid_rrf,3,MED-3918,1.0,0.15384615384615385,"Herbal infusions as a source of calcium, magnesium, iron, zinc and copper in human nutrition."
+pouca ou nenhuma alteração,PLAIN-1557,magnesium,hybrid_rrf,4,MED-2248,0.0,0.14215686274509803,Trace element status in healthy subjects switching from a mixed to a lactovegetarian diet for 12 mo.
+pouca ou nenhuma alteração,PLAIN-1557,magnesium,hybrid_rrf,5,MED-1110,0.0,0.07142857142857142,The potential role of curcumin in patients with monoclonal gammopathy of undefined significance--its effect on paraproteinemia and the urinary N-te...
+pouca ou nenhuma alteração,PLAIN-1557,magnesium,hybrid_rrf,6,MED-1447,0.0,0.06666666666666667,Nutrient intake in the GEICO multicenter trial: the effects of a multicomponent worksite intervention
+pouca ou nenhuma alteração,PLAIN-1557,magnesium,hybrid_rrf,7,MED-1844,0.0,0.06666666666666667,"Determination of total aluminum, chromium, copper, iron, manganese, and nickel and their fractions leached to the infusions of black tea, green tea..."
+pouca ou nenhuma alteração,PLAIN-1557,magnesium,hybrid_rrf,8,MED-1843,0.0,0.0625,Aluminium in over-the-counter drugs: risks outweigh benefits?
+pouca ou nenhuma alteração,PLAIN-1557,magnesium,hybrid_rrf,9,MED-4313,1.0,0.0625,A vegetarian dietary pattern as a nutrient-dense approach to weight management: an analysis of the national health and nutrition examination survey...
+pouca ou nenhuma alteração,PLAIN-1557,magnesium,hybrid_rrf,10,MED-2380,0.0,0.06243550051599587,"Nuts, hypertension and endothelial function."
+segundo maior ganho,PLAIN-1473,kohlrabi,hybrid_reranking,1,MED-4455,1.0,1.2214808464050293,"Glucoraphanin and 4-hydroxyglucobrassicin contents in seeds of 59 cultivars of broccoli, raab, kohlrabi, radish, cauliflower, brussels sprouts, kal..."
+segundo maior ganho,PLAIN-1473,kohlrabi,hybrid_reranking,2,MED-4713,0.0,-4.309737205505371,A case of Kombucha tea toxicity.
+segundo maior ganho,PLAIN-1473,kohlrabi,hybrid_reranking,3,MED-4459,0.0,-6.169705867767334,Impact of Nrf2 on UVB-induced skin inflammation/photoprotection and photoprotective effect of sulforaphane.
+segundo maior ganho,PLAIN-1473,kohlrabi,hybrid_reranking,4,MED-4664,0.0,-8.363072395324707,Iodine toxicity from soy milk and seaweed ingestion is associated with serious thyroid dysfunction.
+segundo maior ganho,PLAIN-1473,kohlrabi,hybrid_reranking,5,MED-1008,0.0,-8.50122356414795,Peppermint oil (Mintoil) in the treatment of irritable bowel syndrome: a prospective double blind placebo-controlled randomized trial.
+segundo maior ganho,PLAIN-1473,kohlrabi,hybrid_reranking,6,MED-1018,0.0,-8.711052894592285,The effect of intensive diabetes treatment on the progression of diabetic retinopathy in insulin-dependent diabetes mellitus. The Diabetes Control ...
+segundo maior ganho,PLAIN-1473,kohlrabi,hybrid_reranking,7,MED-1014,0.0,-8.740242958068848,Medication management of irritable bowel syndrome.
+segundo maior ganho,PLAIN-1473,kohlrabi,hybrid_reranking,8,MED-1021,0.0,-8.747516632080078,Management of diabetic retinopathy: a systematic review.
+segundo maior ganho,PLAIN-1473,kohlrabi,hybrid_reranking,9,MED-2231,0.0,-8.772647857666016,Potential efficacy of broccoli sprouts as a unique supplement for management of type 2 diabetes and its complications.
+segundo maior ganho,PLAIN-1473,kohlrabi,hybrid_reranking,10,MED-1002,0.0,-8.789578437805176,"Polybrominated diphenyl ethers (PBDEs), hydroxylated PBDEs (OH-PBDEs), and measures of thyroid function in second trimester pregnant women in California"
+segundo maior ganho,PLAIN-1473,kohlrabi,hybrid_rrf,1,MED-3947,0.0,0.09090909090909091,Hibiscus anthocyanins rich extract-induced apoptotic cell death in human promyelocytic leukemia cells.
+segundo maior ganho,PLAIN-1473,kohlrabi,hybrid_rrf,2,MED-4455,1.0,0.09090909090909091,"Glucoraphanin and 4-hydroxyglucobrassicin contents in seeds of 59 cultivars of broccoli, raab, kohlrabi, radish, cauliflower, brussels sprouts, kal..."
+segundo maior ganho,PLAIN-1473,kohlrabi,hybrid_rrf,3,MED-10,0.0,0.08333333333333333,Statin Use and Breast Cancer Survival: A Nationwide Cohort Study from Finland
+segundo maior ganho,PLAIN-1473,kohlrabi,hybrid_rrf,4,MED-4660,0.0,0.08333333333333333,Variability of iodine content in common commercially available edible seaweeds.
+segundo maior ganho,PLAIN-1473,kohlrabi,hybrid_rrf,5,MED-1000,0.0,0.07692307692307693,Neurobehavioral function and low-level exposure to brominated flame retardants in adolescents: a cross-sectional study
+segundo maior ganho,PLAIN-1473,kohlrabi,hybrid_rrf,6,MED-3441,0.0,0.07692307692307693,Marine edible algae as disease preventers.
+segundo maior ganho,PLAIN-1473,kohlrabi,hybrid_rrf,7,MED-1002,0.0,0.07142857142857142,"Polybrominated diphenyl ethers (PBDEs), hydroxylated PBDEs (OH-PBDEs), and measures of thyroid function in second trimester pregnant women in California"
+segundo maior ganho,PLAIN-1473,kohlrabi,hybrid_rrf,8,MED-3447,0.0,0.07142857142857142,Seaweed prevents breast cancer?
+segundo maior ganho,PLAIN-1473,kohlrabi,hybrid_rrf,9,MED-1003,0.0,0.06666666666666667,In Utero and Childhood Polybrominated Diphenyl Ether (PBDE) Exposures and Neurodevelopment in the CHAMACOS Study
+segundo maior ganho,PLAIN-1473,kohlrabi,hybrid_rrf,10,MED-5024,0.0,0.06666666666666667,Disseminated chlorellosis in a dog.

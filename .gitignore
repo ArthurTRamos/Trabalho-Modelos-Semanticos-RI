@@ -1,7 +1,0 @@
-.venv
-nfcorpus
-nfcorpus*.zip
-*.csv
-Experiments/
-__pycache__/
-*.py[cod]

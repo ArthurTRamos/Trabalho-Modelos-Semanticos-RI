@@ -1,0 +1,51 @@
+{
+  "artifact_fingerprint": "67a11064f9c221dbcc212354fd968e6632c7203184bafdabd751c8b2ff69dadb",
+  "reviewer_id": "",
+  "cases": [
+    {
+      "category": "melhora",
+      "query_id": "",
+      "selection_reason": "",
+      "comparison": "",
+      "information_in_context": "pending",
+      "primary_stage": "",
+      "stage_reason": "",
+      "evidence": [
+        {
+          "doc_id": "",
+          "quote": ""
+        }
+      ]
+    },
+    {
+      "category": "pouca_diferenca",
+      "query_id": "",
+      "selection_reason": "",
+      "comparison": "",
+      "information_in_context": "pending",
+      "primary_stage": "",
+      "stage_reason": "",
+      "evidence": [
+        {
+          "doc_id": "",
+          "quote": ""
+        }
+      ]
+    },
+    {
+      "category": "nao_ajudou",
+      "query_id": "",
+      "selection_reason": "",
+      "comparison": "",
+      "information_in_context": "pending",
+      "primary_stage": "",
+      "stage_reason": "",
+      "evidence": [
+        {
+          "doc_id": "",
+          "quote": ""
+        }
+      ]
+    }
+  ]
+}

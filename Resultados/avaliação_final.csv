@@ -1,0 +1,45 @@
+﻿query_id,query,condition,fidelidade,justificativa_fidelidade,completude,justificativa_completude,utilidade,justificativa_utilidade,rastreabilidade,justificativa_rastreabilidade
+,,,,,,,,,,
+Pessoa 1,,,,,,,,,,
+PLAIN-68,What is Actually in Chicken Nuggets?,A_without_rag,0,Não pega o resultado principal.,1,"Fala dos ingredientes, mas falta o mais importante.",1,"Até ajuda, mas fica meio generica.",N/A,N/A
+PLAIN-68,What is Actually in Chicken Nuggets?,B_with_rag,2,Acerta o ponto principal de MED-2991.,2,Fala da gordura e dos outros tecidos tambem.,2,Da pra entender bem a resposta.,1,Não colocou o ID do documento.
+PLAIN-2450,Are Organic Foods Safer?,A_without_rag,1,"Tem coisa certa, mas exagera nos beneficios.",1,Não fala direito que os estudos ainda são incertos.,1,"Ajuda um pouco, mas não responde tão bem.",N/A,N/A
+PLAIN-2450,Are Organic Foods Safer?,B_with_rag,1,"Usa estudos sobre o assunto, mas mistura as coisas.",2,Traz mais detalhes sobre os pesticidas.,1,No final fica meio confuso.,1,"Cita os estudos, mas não deixa tão claro a relação."
+PLAIN-153,How Should I Take Probiotics?,A_without_rag,1,A dica não tá totalmente errada.,1,Faltou falar a hora melhor de consumir.,1,"Ajuda, mas falta uma parte importante.",N/A,N/A
+PLAIN-153,How Should I Take Probiotics?,B_with_rag,2,Traz o resultado de MED-3679 certinho.,2,Fala do horario e da refeição tambem.,2,Da uma resposta boa pra usar.,1,Não fala o ID do estudo.
+PLAIN-2850,More Antibiotics In White Meat or Dark Meat?,A_without_rag,0,Não responde o que foi perguntado.,0,Não fala dos residuos nos tecidos.,0,Quase não ajuda nessa pergunta.,N/A,N/A
+PLAIN-2850,More Antibiotics In White Meat or Dark Meat?,B_with_rag,0,Usa um estudo que não responde isso.,0,Não faz a comparação entre os tecidos.,0,"Fala de mortalidade, mas não era isso.",0,A referência não é a certa.
+PLAIN-2750,Preventing the Common Cold with Probiotics?,A_without_rag,0,Fala o contrario do que aparece em MED-3683.,1,Não traz os dados sobre a queda dos resfriados.,1,Acaba dando uma resposta pouco confiavel.,N/A,N/A
+PLAIN-2750,Preventing the Common Cold with Probiotics?,B_with_rag,2,Mostra o resultado do estudo direitinho.,2,Coloca os numeros dos resfriados e dos sintomas.,2,Ajuda bastante a responder.,1,Indica o estudo que foi usado.
+PLAIN-270,Is Caffeinated Tea Really Dehydrating?,A_without_rag,1,"No geral tá certo, mas exagera no começo.",1,Explica mais ou menos bem a hidratação.,2,"Da pra aproveitar, mesmo com esse erro.",N/A,N/A
+PLAIN-270,Is Caffeinated Tea Really Dehydrating?,B_with_rag,2,Responde certo sobre a hidratação.,2,Explica o resultado sem faltar muita coisa.,2,É direta e ajuda a entender.,2,Usa MED-4331 como fonte.
+PLAIN-2470,Is Milk Good for Our Bones?,A_without_rag,1,"Fala do calcio, mas simplifica demais.",1,Faltou falar melhor das fraturas e dos ossos.,1,"Ajuda, mas fica faltando coisa.",N/A,N/A
+PLAIN-2470,Is Milk Good for Our Bones?,B_with_rag,2,Junta os resultados dos estudos.,2,Mostra os beneficios e tambem os limites.,2,Ajuda a entender melhor essa questão do leite.,2,Coloca os IDs dos estudos.
+PLAIN-2430,Preventing Brain Loss with B Vitamins?,A_without_rag,1,"Fala dos beneficios, mas nem tudo tem apoio.",1,Os exemplos não ficam bem comprovados.,1,Pode acabar passando uma ideia errada.,N/A,N/A
+PLAIN-2430,Preventing Brain Loss with B Vitamins?,B_with_rag,1,"Traz resultados positivos, mas força um pouco.",2,Mostra estudos e algumas limitações.,1,"Fala que previne perda cerebral, mas isso é demais.",2,Indica os estudos usados.
+PLAIN-238,How Chemically Contaminated Are We?,A_without_rag,1,"A explicação é válida, só que bem geral.",1,Faltou trazer dados dos alimentos.,1,"Da uma noção do tema, mas não entra em detalhe.",N/A,N/A
+PLAIN-238,How Chemically Contaminated Are We?,B_with_rag,2,Traz dados de MED-2391.,1,Fica mais nos alimentos dos EUA.,1,"Ajuda, mas não fala muito de outros casos.",1,Mostra de onde vieram os dados.
+PLAIN-3342,Is Coconut Milk Good For You?,A_without_rag,0,"Fala de beneficios, mas sem muita prova.",1,Não considera os resultados que mostram efeitos ruins.,0,Pode deixar a pessoa com uma ideia errada.,N/A,N/A
+PLAIN-3342,Is Coconut Milk Good For You?,B_with_rag,1,"Usa uma fonte, mas tira conclusão demais dela.",1,Faltam dados pra provar esses efeitos.,1,"Dá pra aproveitar, mas pode confundir.",2,Cita MED-5014.
+,,,,,,,,,,
+Pessoa 2,,,,,,,,,,
+PLAIN-68,What is Actually in Chicken Nuggets?,A_without_rag,0,"diz que é peito de frango, o MED-2991 mostra o contrario",0,"só lista ingredientes genericos, nao fala da composição real",1,lista coisas mas não responde o que tem de fato,N/A,N/A sem contexto externo
+PLAIN-68,What is Actually in Chicken Nuggets?,B_with_rag,2,"bate com o MED-2991, mais gordura que musculo",2,cobre os componentes que o estudo cita,2,responde direto a pergunta,1,"deu só o titulo do documento, sem o id"
+PLAIN-2450,Are Organic Foods Safer?,A_without_rag,1,"exagera dizendo que não tem quimico nocivo, depois se contradiz",1,não fala das bacterias resistentes a antibiotico,1,conclusão meio confusa,N/A,N/A sem contexto externo
+PLAIN-2450,Are Organic Foods Safer?,B_with_rag,1,o sim vem de estudo de percepção (MED-1144) não de segurança real,1,cobre pouco da evidencia de verdade,1,no fim diz que é insuficiente e fica sem conclusão clara,0,fala 'o documento' sem id nenhum
+PLAIN-153,How Should I Take Probiotics?,A_without_rag,1,"com alimento bate com o MED-3679, o resto é generico",1,falta o ponto da gordura e de não tomar depois,1,conselho generico mas da pra usar,N/A,N/A sem contexto externo
+PLAIN-153,How Should I Take Probiotics?,B_with_rag,1,citações do MED-3679 certas mas inventa divergencia entre documentos,2,cobre bem o momento e a gordura,2,recomendação clara apesar do final confuso,1,"só o primeiro documento é identificado, pelo titulo"
+PLAIN-2850,More Antibiotics In White Meat or Dark Meat?,A_without_rag,0,diz que não tem diferença mas o MED-4166 mostra mais no peito,0,não fala dos antibioticos de verdade,0,não ajuda com a pergunta,N/A,N/A sem contexto externo
+PLAIN-2850,More Antibiotics In White Meat or Dark Meat?,B_with_rag,0,estudo de mortalidade (MED-4983) e lê errado a associação,0,não toca em antibiotico,0,não responde a pergunta,2,id certo e rastreavel mas a fonte é errada
+PLAIN-2750,Preventing the Common Cold with Probiotics?,A_without_rag,0,"diz que não tem evidencia, mas tem o MED-3683",0,ignora os estudos de probiotico,1,dicas gerais ajudam um pouco,N/A,N/A sem contexto externo
+PLAIN-2750,Preventing the Common Cold with Probiotics?,B_with_rag,2,numeros do MED-3683 corretos,1,"só um ensaio, sem ressalva",2,responde direto,2,titulo do estudo citado
+PLAIN-270,Is Caffeinated Tea Really Dehydrating?,A_without_rag,1,"meio certo, parecido com MED-4331 porem sem base",1,"cobre em parte, ressalva consumo moderado",1,resposta ambigua,N/A,N/A sem contexto externo
+PLAIN-270,Is Caffeinated Tea Really Dehydrating?,B_with_rag,2,certo conforme o MED-4331,1,faltou dizer que foi com 21 homens saudaveis,1,começa com 'Yes' e confunde,2,MED-4331 citado corretamente
+PLAIN-2470,Is Milk Good for Our Bones?,A_without_rag,0,"o sim não se sustenta, MED-1337 e 1340 não mostram beneficio",1,só fala de calcio e caseina,1,resposta clara mas errada,N/A,N/A sem contexto externo
+PLAIN-2470,Is Milk Good for Our Bones?,B_with_rag,1,erra o MED-1340 e liga o MED-904 a osso sem motivo,2,cobre bem os estudos,2,conclusão prudente e clara,2,ids citados corretamente
+PLAIN-2430,Preventing Brain Loss with B Vitamins?,A_without_rag,0,doses que não aparecem no corpus,1,fala do beneficio e ressalva que precisa mais pesquisa,1,responde mas com info sem base,N/A,N/A sem contexto externo
+PLAIN-2430,Preventing Brain Loss with B Vitamins?,B_with_rag,1,ignora o MED-986 e diz que nenhum estudo trata de atrofia,1,inclui estudo fora do tema (MED-4929),2,"resposta direta, um 'sim'",2,ids citados
+PLAIN-238,How Chemically Contaminated Are We?,A_without_rag,1,generico mas sem contradição,1,não diz o quanto estamos contaminados,1,panorama util porem vago,N/A,N/A sem contexto externo
+PLAIN-238,How Chemically Contaminated Are We?,B_with_rag,2,dados batem com o MED-2391,1,"só alimentos de Dallas, sem exposição humana",1,responde só em parte,0,"fala só 'o documento', sem id"
+PLAIN-3342,Is Coconut Milk Good For You?,A_without_rag,0,"diz que tem pouca gordura saturada, errado",1,cobre nutrientes e riscos por cima,1,resposta clara mas com erro,N/A,N/A sem contexto externo
+PLAIN-3342,Is Coconut Milk Good For You?,B_with_rag,0,pressão e colesterol não estão no MED-5014,1,cobre algo mas omite o MED-5013,1,um sim direto porem fraco,1,id certo mas o conteudo atribuido não

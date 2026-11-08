@@ -1,0 +1,8 @@
+evaluator_a,evaluator_b,condition,criterion,n_pairs,exact_agreement,quadratic_kappa
+avaliador_1,avaliador_2,A,fidelidade,10,0.8,0.6153846153846154
+avaliador_1,avaliador_2,A,completude,10,0.8,0.4117647058823529
+avaliador_1,avaliador_2,A,utilidade,10,0.8,0.4736842105263158
+avaliador_1,avaliador_2,B,fidelidade,10,0.7,0.7272727272727273
+avaliador_1,avaliador_2,B,completude,10,0.6,0.5833333333333333
+avaliador_1,avaliador_2,B,utilidade,10,0.8,0.7727272727272727
+avaliador_1,avaliador_2,B,rastreabilidade,10,0.5,0.21568627450980393
